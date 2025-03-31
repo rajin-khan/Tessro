@@ -1,0 +1,10 @@
+/* client/src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: Basic body styling */
+body {
+  @apply bg-dark-bg text-gray-200 antialiased;
+  font-family: 'Inter', sans-serif; /* Add a nice font later */
+}
