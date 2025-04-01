@@ -102,12 +102,29 @@ npm run dev
 
 ## 🧭 Roadmap
 
-- [ ] Local file-based sync playback
-- [ ] Real-time chat
+- [x] Local file-based sync playback
+- [x] Real-time chat
 - [ ] Peer-to-peer streaming (WebRTC)
 - [ ] Subtitle sync
 - [ ] User login + profiles
 - [ ] Native mobile app
+
+---
+
+### ✅ MVP Feature Checklist
+
+| Feature | Status | Notes |
+|--------|--------|-------|
+| **Connection & Socket Setup** | ✅ | Robust, with connection indicator |
+| **Session Creation (w/ password & nickname)** | ✅ | Fully functional |
+| **Session Join (w/ password & nickname)** | ✅ | Includes error handling |
+| **File Selection + Sync Enforcement** | ✅ | Includes file hash validation |
+| **Playback Controls (Play, Pause, Seek)** | ✅ | Works across all clients |
+| **Chat (Real-time, with nicknames)** | ✅ | Autoscroll, nickname tagging, sender-based alignment |
+| **Participants List** | ✅ | Real-time updates, shows host/self clearly |
+| **Leave Session** | ✅ | With host cleanup logic + auto disconnect |
+| **Stream Room UI** | ✅ | Responsive, toggleable chat/participant sidebar |
+| **Error Handling** | ✅ | Session not found, wrong password, connection issues — all covered |
 
 ---
 
