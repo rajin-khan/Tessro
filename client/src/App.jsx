@@ -3,6 +3,7 @@ import CreateSession from './components/Session/Create';
 import JoinSession from './components/Session/Join';
 import SessionInfo from './components/Session/Info';
 import Participants from './components/Session/Participants';
+import LeaveSession from './components/Session/Leave';
 import VideoPlayer from './components/VideoPlayer/index.jsx';
 import Chat from './components/Chat/index.jsx';
 import { useSocket } from './hooks/useSocket';
@@ -14,47 +15,41 @@ function App() {
   const [mode, setMode] = useState('create');
   const [participants, setParticipants] = useState([]);
 
-  console.log("App rendering. Session ID:", sessionId, "Socket ID:", socket?.id, "Connected:", isConnected);
+  const resetSessionState = () => {
+    setSessionId(null);
+    setParticipants([]);
+    setAppError(null);
+  };
 
   useEffect(() => {
     if (!socket) return;
 
     const handleSessionCreated = ({ sessionId: newSessionId, error: creationError }) => {
-      console.log(">>> handleSessionCreated triggered!", { newSessionId, creationError });
-
       if (creationError) {
         console.error("Session creation failed:", creationError);
         setAppError(`Session creation failed: ${creationError}`);
         setSessionId(null);
       } else if (newSessionId) {
-        console.log(">>> Setting Session ID state to:", newSessionId);
         setSessionId(newSessionId);
         setAppError(null);
-      } else {
-        console.warn(">>> session:created event received but no sessionId found.");
       }
     };
 
     const handleSessionJoined = ({ sessionId: joinedSessionId }) => {
-      console.log(">>> handleSessionJoined triggered!", joinedSessionId);
       setSessionId(joinedSessionId);
       setAppError(null);
     };
 
     const handleSessionError = ({ error }) => {
-      console.error(">>> handleSessionError triggered!", error);
       setAppError(error || "Something went wrong while joining the session.");
     };
 
     const handleHostDisconnected = ({ message }) => {
-      console.warn(">>> handleHostDisconnected triggered!", message);
       setAppError(message || "The session host disconnected.");
-      setSessionId(null);
-      setParticipants([]);
+      resetSessionState();
     };
 
     const handleParticipantUpdate = ({ participants }) => {
-      console.log(">>> Updated participants list:", participants);
       setParticipants(participants);
     };
 
@@ -117,6 +112,7 @@ function App() {
         ) : (
           <>
             <SessionInfo sessionId={sessionId} />
+            <LeaveSession socket={socket} onLeave={resetSessionState} />
             <Participants
               participants={participants}
               hostId={participants[0]?.id}

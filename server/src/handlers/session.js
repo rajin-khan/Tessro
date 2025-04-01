@@ -72,4 +72,43 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
     // Send full updated list
     io.to(sessionId).emit('session:participants', { participants: session.users });
   });
+
+    /**
+   * SESSION LEAVE
+   */
+    socket.on('session:leave', () => {
+        const sessionId = socketToSessionMap.get(socket.id);
+        if (!sessionId) return;
+    
+        const sessionData = sessions.get(sessionId);
+        if (!sessionData) return;
+    
+        const wasHost = sessionData.host === socket.id;
+    
+        // Remove the user
+        sessionData.users = sessionData.users.filter(u => u.id !== socket.id);
+        socketToSessionMap.delete(socket.id);
+        socket.leave(sessionId);
+    
+        if (wasHost) {
+          console.log(`[session] Host left. Ending session ${sessionId}.`);
+          sessions.delete(sessionId);
+          io.to(sessionId).emit('session:host_disconnected', { message: 'Host left the session.' });
+          io.socketsLeave(sessionId); // Force others to leave
+          return;
+        }
+    
+        if (sessionData.users.length === 0) {
+          console.log(`[session] Last user left session ${sessionId}. Cleaning up.`);
+          sessions.delete(sessionId);
+          return;
+        }
+    
+        // Update session and notify others
+        sessions.set(sessionId, sessionData);
+        io.to(sessionId).emit('user:left', { userId: socket.id });
+        io.to(sessionId).emit('session:participants', { participants: sessionData.users });
+    
+        console.log(`[session] ${socket.id} left session ${sessionId}`);
+      });    
 }
