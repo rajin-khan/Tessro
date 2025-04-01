@@ -12,7 +12,7 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
     const sessionId = generateSessionId();
     const name = nickname?.trim() || `Host${Math.floor(Math.random() * 1000)}`;
 
-    sessions.set(sessionId, {
+    const newSession = {
       host: socket.id,
       password: password || null,
       createdAt: Date.now(),
@@ -22,13 +22,16 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
           nickname: name,
         },
       ],
-    });
+    };
 
+    sessions.set(sessionId, newSession);
     socketToSessionMap.set(socket.id, sessionId);
     socket.join(sessionId);
 
     console.log(`[session] Created session ${sessionId} by ${name} (${socket.id})`);
+
     socket.emit('session:created', { sessionId });
+    io.to(sessionId).emit('session:participants', { participants: newSession.users });
   });
 
   /**
@@ -59,11 +62,14 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
 
     socketToSessionMap.set(socket.id, sessionId);
     socket.join(sessionId);
-    sessions.set(sessionId, session); // Update the session
+    sessions.set(sessionId, session); // Save updated session
 
     console.log(`[session] ${name} (${socket.id}) joined session ${sessionId}`);
     socket.emit('session:joined', { sessionId });
 
     io.to(sessionId).emit('user:joined', { userId: socket.id, nickname: name });
+
+    // Send full updated list
+    io.to(sessionId).emit('session:participants', { participants: session.users });
   });
 }
