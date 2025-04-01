@@ -2,7 +2,8 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { registerSessionHandlers } from './handlers/session.js';
-import { registerSyncHandlers } from './handlers/sync.js'; // ✅ Sync handler added
+import { registerSyncHandlers } from './handlers/sync.js';
+import { registerChatHandlers } from './handlers/chat.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -31,7 +32,7 @@ io.on('connection', (socket) => {
   // Register per-socket event handlers
   registerSessionHandlers(io, socket, sessions, socketToSessionMap);
   registerSyncHandlers(io, socket, sessions); // ✅ Sync support activated
-  // registerChatHandlers(io, socket, sessions); // Later...
+  registerChatHandlers(io, socket, sessions); // ✅ Enable chat
 
   // Handle disconnection
   socket.on('disconnect', () => {

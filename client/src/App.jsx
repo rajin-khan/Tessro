@@ -1,8 +1,10 @@
+// client/src/App.jsx
 import React, { useState, useEffect } from 'react';
 import CreateSession from './components/Session/Create';
 import JoinSession from './components/Session/Join';
 import SessionInfo from './components/Session/Info';
 import VideoPlayer from './components/VideoPlayer/index.jsx';
+import Chat from './components/Chat/index.jsx';
 import { useSocket } from './hooks/useSocket';
 
 function App() {
@@ -111,6 +113,7 @@ function App() {
             <div className="mt-6">
               <VideoPlayer socket={socket} sessionId={sessionId} />
             </div>
+            <Chat socket={socket} sessionId={sessionId} />
           </>
         )}
       </main>
