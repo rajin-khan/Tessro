@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function JoinSession({ socket, isConnected }) {
   const [sessionId, setSessionId] = useState('');
   const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [joined, setJoined] = useState(false);
@@ -21,7 +22,13 @@ function JoinSession({ socket, isConnected }) {
     setError('');
     setIsJoining(true);
 
-    socket.emit('session:join', { sessionId, password });
+    const name = nickname.trim() || `Guest${Math.floor(Math.random() * 1000)}`;
+
+    socket.emit('session:join', {
+      sessionId,
+      password,
+      nickname: name,
+    });
   };
 
   useEffect(() => {
@@ -29,7 +36,6 @@ function JoinSession({ socket, isConnected }) {
       setJoined(true);
       setIsJoining(false);
       console.log('Successfully joined session:', sessionId);
-      // You can navigate to player screen here if routing is used
     };
 
     const handleJoinError = ({ error }) => {
@@ -72,6 +78,14 @@ function JoinSession({ socket, isConnected }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         className="w-full px-4 py-2 rounded-md bg-dark-bg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+      />
+
+      <input
+        type="text"
+        placeholder="Your Nickname"
+        value={nickname}
+        onChange={(e) => setNickname(e.target.value)}
+        className="w-full px-4 py-2 rounded-md bg-dark-bg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
 
       {error && (

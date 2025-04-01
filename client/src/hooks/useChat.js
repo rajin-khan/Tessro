@@ -1,4 +1,3 @@
-// client/src/hooks/useChat.js
 import { useEffect, useState } from 'react';
 
 export function useChat(socket, sessionId) {
@@ -24,7 +23,7 @@ export function useChat(socket, sessionId) {
 
     const msg = {
       id: Date.now(),
-      sender: socket.id,
+      senderId: socket.id, // match server-side naming
       text: trimmed,
       timestamp: new Date().toISOString()
     };
