@@ -1,40 +1,39 @@
-import { useEffect, useState } from 'react';
-
 export function useChat(socket, sessionId) {
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    if (!socket || !sessionId) return;
-
-    const handleMessage = (msg) => {
+    const [messages, setMessages] = useState([]);
+  
+    useEffect(() => {
+      if (!socket || !sessionId) return;
+  
+      const handleMessage = (msg) => {
+        setMessages(prev => [...prev, msg]);
+      };
+  
+      socket.on('chat:message', handleMessage);
+  
+      return () => {
+        socket.off('chat:message', handleMessage);
+      };
+    }, [socket, sessionId]);
+  
+    const sendMessage = (text) => {
+      const trimmed = text.trim();
+      if (!trimmed || !sessionId) return;
+  
+      const msg = {
+        id: Date.now(),
+        senderId: socket.id,
+        text: trimmed,
+        timestamp: new Date().toISOString(),
+        nickname: 'Me' // placeholder; real name already shown in UI
+      };
+  
       setMessages(prev => [...prev, msg]);
+  
+      socket.emit('chat:message', {
+        sessionId,
+        message: msg
+      });
     };
-
-    socket.on('chat:message', handleMessage);
-
-    return () => {
-      socket.off('chat:message', handleMessage);
-    };
-  }, [socket, sessionId]);
-
-  const sendMessage = (text) => {
-    const trimmed = text.trim();
-    if (!trimmed || !sessionId) return;
-
-    const msg = {
-      id: Date.now(),
-      senderId: socket.id, // match server-side naming
-      text: trimmed,
-      timestamp: new Date().toISOString()
-    };
-
-    setMessages(prev => [...prev, msg]);
-
-    socket.emit('chat:message', {
-      sessionId,
-      message: msg
-    });
-  };
-
-  return { messages, sendMessage };
-}
+  
+    return { messages, sendMessage };
+  }  
