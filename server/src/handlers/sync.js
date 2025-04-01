@@ -6,12 +6,12 @@ export function registerSyncHandlers(io, socket, sessions) {
         return;
       }
   
-      if (!session.users.includes(socket.id) && socket.id !== session.host) {
+      const user = session.users.find(u => u.id === socket.id);
+      if (!user && socket.id !== session.host) {
         console.warn(`[sync] Unauthorized user tried to sync`);
         return;
       }
   
-      // Broadcast to others in the session
       socket.to(sessionId).emit('sync:action', { action, timestamp, seekTime });
     });
   
