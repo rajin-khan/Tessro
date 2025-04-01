@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CreateSession from './components/Session/Create';
 import JoinSession from './components/Session/Join';
-import SessionInfo from './components/Session/Info';
-import Participants from './components/Session/Participants';
-import LeaveSession from './components/Session/Leave';
-import VideoPlayer from './components/VideoPlayer/index.jsx';
-import Chat from './components/Chat/index.jsx';
+import StreamRoom from './components/StreamRoom.jsx';
 import { useSocket } from './hooks/useSocket';
 
 function App() {
@@ -26,7 +22,6 @@ function App() {
 
     const handleSessionCreated = ({ sessionId: newSessionId, error: creationError }) => {
       if (creationError) {
-        console.error("Session creation failed:", creationError);
         setAppError(`Session creation failed: ${creationError}`);
         setSessionId(null);
       } else if (newSessionId) {
@@ -79,15 +74,15 @@ function App() {
         </p>
       </header>
 
-      <main className="w-full max-w-3xl bg-dark-surface p-6 rounded-lg shadow-lg">
+      <main className="w-full">
         {appError && (
-          <div className="bg-red-800 border border-red-600 text-white p-3 rounded mb-4 text-center text-sm">
+          <div className="bg-red-800 border border-red-600 text-white p-3 rounded mb-4 text-center text-sm max-w-xl mx-auto">
             {appError}
           </div>
         )}
 
         {!sessionId ? (
-          <>
+          <div className="w-full max-w-md bg-dark-surface p-6 rounded-lg shadow-lg mx-auto">
             <div className="flex justify-center space-x-4 mb-4">
               <button
                 onClick={() => setMode('create')}
@@ -108,21 +103,14 @@ function App() {
             ) : (
               <JoinSession socket={socket} isConnected={isConnected} />
             )}
-          </>
+          </div>
         ) : (
-          <>
-            <SessionInfo sessionId={sessionId} />
-            <LeaveSession socket={socket} onLeave={resetSessionState} />
-            <Participants
-              participants={participants}
-              hostId={participants[0]?.id}
-              selfId={socket.id}
-            />
-            <div className="mt-6">
-              <VideoPlayer socket={socket} sessionId={sessionId} />
-            </div>
-            <Chat socket={socket} sessionId={sessionId} />
-          </>
+          <StreamRoom
+            socket={socket}
+            sessionId={sessionId}
+            participants={participants}
+            onLeave={resetSessionState}
+          />
         )}
       </main>
 

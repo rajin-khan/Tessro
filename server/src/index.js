@@ -35,37 +35,45 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
     const sessionId = socketToSessionMap.get(socket.id);
-
-    if (!sessionId) return;
-
-    const sessionData = sessions.get(sessionId);
-    if (!sessionData) return;
-
-    const wasHost = sessionData.host === socket.id;
-
-    // Remove user from session
-    sessionData.users = sessionData.users.filter(u => u.id !== socket.id);
-    socketToSessionMap.delete(socket.id);
-
-    if (wasHost) {
-      console.log(`Host of session ${sessionId} disconnected. Deleting session.`);
-      sessions.delete(sessionId);
-      io.to(sessionId).emit('session:host_disconnected', { message: 'Host disconnected, session ended.' });
-      io.socketsLeave(sessionId); // Force users to leave
-      return;
+  
+    if (sessionId) {
+      const sessionData = sessions.get(sessionId);
+  
+      if (sessionData) {
+        sessionData.users = sessionData.users.filter(userId => userId !== socket.id);
+        console.log(`User ${socket.id} removed from session ${sessionId}. Remaining: ${sessionData.users.length}`);
+  
+        // HOST DISCONNECTED
+        if (sessionData.host === socket.id) {
+          console.log(`Host disconnected. Deleting session ${sessionId}.`);
+          sessions.delete(sessionId);
+          io.to(sessionId).emit('session:host_disconnected', { message: 'Host disconnected, session ended.' });
+          io.socketsLeave(sessionId);
+        }
+  
+        // LAST USER LEFT
+        else if (sessionData.users.length === 0) {
+          console.log(`Last user left session ${sessionId}. Deleting session.`);
+          sessions.delete(sessionId);
+        }
+  
+        // JUST A REGULAR USER LEFT
+        else {
+          sessions.set(sessionId, sessionData);
+          io.to(sessionId).emit('user:left', { userId: socket.id });
+  
+          // 🔁 EMIT UPDATED PARTICIPANTS LIST
+          const updatedParticipants = sessionData.users.map(id => ({
+            id,
+            nickname: sessionData.nicknames?.[id] || 'Guest'
+          }));
+          io.to(sessionId).emit('session:participants', { participants: updatedParticipants });
+        }
+      }
+  
+      socketToSessionMap.delete(socket.id);
     }
-
-    if (sessionData.users.length === 0) {
-      console.log(`Last user left session ${sessionId}. Deleting session.`);
-      sessions.delete(sessionId);
-      return;
-    }
-
-    // Update the session and notify others
-    sessions.set(sessionId, sessionData);
-    io.to(sessionId).emit('user:left', { userId: socket.id });
-    io.to(sessionId).emit('session:participants', { participants: sessionData.users });
-  });
+  });  
 });
 
 const PORT = process.env.PORT || 3001;
