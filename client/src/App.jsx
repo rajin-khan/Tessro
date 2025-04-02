@@ -36,8 +36,13 @@ function App() {
     };
 
     const handleSessionError = ({ error }) => {
-      setAppError(error || "Something went wrong while joining the session.");
-    };
+        if (error?.includes("does not match the host")) {
+          // suppress file mismatch errors from showing globally
+          return;
+        } 
+        setAppError(error || "Something went wrong while joining the session.");
+      };
+      
 
     const handleHostDisconnected = ({ message }) => {
       setAppError(message || "The session host disconnected.");

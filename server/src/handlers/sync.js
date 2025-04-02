@@ -1,3 +1,5 @@
+// ✅ Updated server-side sync.js
+
 export function registerSyncHandlers(io, socket, sessions) {
     socket.on('sync:action', ({ sessionId, action, timestamp, seekTime }) => {
       const session = sessions.get(sessionId);
@@ -22,17 +24,19 @@ export function registerSyncHandlers(io, socket, sessions) {
         return;
       }
   
-      // ✅ First user's file sets the hash
       if (!session.fileHash) {
         session.fileHash = hash;
         console.log(`[sync] File hash set for session ${sessionId}: ${hash}`);
+        socket.emit('sync:fileStatus', { status: 'matched' });
         return;
       }
   
-      // ✅ Enforce file match
       if (session.fileHash !== hash) {
         console.warn(`[sync] Mismatched file hash from ${socket.id}. Expected: ${session.fileHash}, Got: ${hash}`);
-        socket.emit('session:error', { error: 'Selected video does not match the host\'s file.' });
+        socket.emit('sync:fileStatus', { status: 'mismatched' });
+        return;
       }
+  
+      socket.emit('sync:fileStatus', { status: 'matched' });
     });
   }  
