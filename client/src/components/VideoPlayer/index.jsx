@@ -8,7 +8,7 @@ function VideoPlayer({ socket, sessionId }) {
   const [videoURL, setVideoURL] = useState(null);
   const [fileName, setFileName] = useState('');
   const [fileHash, setFileHash] = useState(null);
-  const [fileStatus, setFileStatus] = useState(null); // matched, mismatched, pending
+  const [fileStatus, setFileStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const { syncLock, emitSyncAction } = useVideoSync({ socket, sessionId, playerRef });
@@ -74,9 +74,9 @@ function VideoPlayer({ socket, sessionId }) {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center font-barlow text-white">
+    <div className="w-full h-full flex flex-col items-center justify-center font-barlow text-white px-2">
       {/* File Picker */}
-      <div className="w-full max-w-md mb-3 bg-brand-dark-purple/40 border border-brand-primary/20 rounded-xl px-4 py-3 shadow-md backdrop-blur-md text-sm space-y-2">
+      <div className="w-full max-w-md mb-4 bg-brand-dark-purple/40 border border-brand-primary/20 rounded-xl px-4 py-3 shadow-md backdrop-blur-md text-sm space-y-2">
         <div className="flex justify-between items-center">
           <label className="text-gray-400">Select Video</label>
           <label className="text-brand-primary cursor-pointer hover:underline">
@@ -109,13 +109,13 @@ function VideoPlayer({ socket, sessionId }) {
 
       {/* Video Player */}
       {videoURL && (
-        <div className="w-full max-w-4xl rounded-2xl overflow-hidden border border-brand-primary/20 shadow-[0_0_20px_#6435AC33] bg-black">
+        <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden border border-brand-primary/20 shadow-[0_0_20px_#6435AC33] bg-black">
           <ReactPlayer
             ref={playerRef}
             url={videoURL}
             controls
             width="100%"
-            height="auto"
+            height="100%"
             onPlay={handlePlay}
             onPause={handlePause}
             onSeek={handleSeek}

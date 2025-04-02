@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import logo from './assets/logo.png'; // ✅ Logo path
+import logo from './assets/logo.png';
 import StreamRoom from './components/StreamRoom.jsx';
 import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
@@ -36,16 +36,12 @@ function App() {
     };
 
     const handleSessionError = ({ error }) => {
-        if (error?.includes("does not match the host")) {
-          // suppress file mismatch errors from showing globally
-          return;
-        } 
-        setAppError(error || "Something went wrong while joining the session.");
-      };
-      
+      if (error?.includes('does not match the host')) return;
+      setAppError(error || 'Something went wrong while joining the session.');
+    };
 
     const handleHostDisconnected = ({ message }) => {
-      setAppError(message || "The session host disconnected.");
+      setAppError(message || 'The session host disconnected.');
       resetSessionState();
     };
 
@@ -71,9 +67,13 @@ function App() {
   return (
     <div className="min-h-screen bg-brand-bg text-white font-barlow flex flex-col items-center justify-center px-4">
       <header className="text-center mb-6">
-        <img src={logo} alt="Tessro Logo" className="h-32 mx-auto mb-2" />
-        <p className="text-sm text-gray-400">Real-time. Real fast.</p>
-        <p className="text-xs text-gray-500 mt-1">
+        <img
+          src={logo}
+          alt="Tessro Logo"
+          className="h-24 sm:h-28 md:h-32 mx-auto mb-2 transition-all"
+        />
+        <p className="text-sm text-gray-400">Real-time, Real fast. Fully private.</p>
+        <p className="text-xs text-gray-500 mt-1 break-all">
           Status:{' '}
           {isConnected ? (
             <span className="text-green-400">Connected</span>
@@ -108,9 +108,8 @@ function App() {
         )}
       </main>
 
-      <footer className="mt-10 text-center text-gray-600 text-xs">
-        Developed by Rajin Khan
-        (visit rajinkhan.com)
+      <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
+        Developed by Rajin Khan (visit rajinkhan.com)
       </footer>
     </div>
   );

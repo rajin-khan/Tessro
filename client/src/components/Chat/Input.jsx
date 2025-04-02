@@ -1,4 +1,3 @@
-// client/src/components/Chat/Input.jsx
 import React, { useState } from 'react';
 
 function ChatInput({ onSend }) {
@@ -14,14 +13,14 @@ function ChatInput({ onSend }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center space-x-2 w-full font-barlow"
+      className="flex flex-wrap gap-2 items-center w-full font-barlow"
     >
       <input
         type="text"
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 px-4 py-2 bg-brand-rich-black/60 text-sm text-white placeholder-gray-400 border border-brand-tekhelet/30 rounded-xl
+        className="flex-1 min-w-0 px-4 py-2 bg-brand-rich-black/60 text-sm text-white placeholder-gray-400 border border-brand-tekhelet/30 rounded-xl
           focus:outline-none focus:bg-brand-rich-black/50 focus:shadow-inner transition duration-200"
       />
       <button
