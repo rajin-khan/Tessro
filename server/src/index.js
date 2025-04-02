@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url';
 const app = express();
 const httpServer = createServer(app);
 
+delete process.env.DEBUG_URL;
+
 const clientURL = process.env.CLIENT_URL || "http://localhost:5173";
 const io = new Server(httpServer, {
   cors: {
