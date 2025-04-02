@@ -103,4 +103,41 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
 
     console.log(`[session] ${socket.id} left session ${sessionId}`);
   });
+
+   /**
+  * Handle socket disconnects (tab close, refresh, etc.)
+  */
+  socket.on('disconnect', () => {
+    const sessionId = socketToSessionMap.get(socket.id);
+    if (!sessionId) return;
+  
+    const session = sessions.get(sessionId);
+    if (!session) return;
+  
+    const wasHost = session.host === socket.id;
+  
+    session.users = session.users.filter(u => u.id !== socket.id);
+    socketToSessionMap.delete(socket.id);
+    socket.leave(sessionId);
+  
+    if (wasHost) {
+      console.log(`[session] Host (${socket.id}) disconnected. Ending session ${sessionId}`);
+      sessions.delete(sessionId);
+      io.to(sessionId).emit('session:host_disconnected', { message: 'Host disconnected.' });
+      io.socketsLeave(sessionId);
+      return;
+    }
+  
+    if (session.users.length === 0) {
+      console.log(`[session] Last user disconnected from session ${sessionId}. Cleaning up.`);
+      sessions.delete(sessionId);
+      return;
+    }
+  
+    sessions.set(sessionId, session);
+    io.to(sessionId).emit('user:left', { userId: socket.id });
+    io.to(sessionId).emit('session:participants', { participants: session.users });
+  
+    console.log(`[session] ${socket.id} disconnected from session ${sessionId}`);
+  });
 }

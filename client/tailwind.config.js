@@ -2,18 +2,30 @@
 export default {
     content: [
       "./index.html",
-      "./src/**/*.{js,ts,jsx,tsx}", // Make sure this covers your file types
+      "./src/**/*.{js,ts,jsx,tsx}", // Covers all client-side files
     ],
     theme: {
       extend: {
-        // Add custom theme extensions later (colors, fonts)
         colors: {
-          'brand-violet': '#6d28d9', // Example violet
-          'brand-yellow': '#facc15', // Example neon yellow
-          'dark-bg': '#111827',     // Example dark background
-          'dark-surface': '#1f2937', // Example slightly lighter surface
-        }
+          'brand-violet': '#6d28d9',
+          'brand-yellow': '#facc15',
+          'dark-bg': '#111827',
+          'dark-surface': '#1f2937',
+          'brand-dark-purple': '#130D2D',
+          'brand-tekhelet': '#4C2E90',
+          'brand-grape': '#6435AC',
+          'brand-rich-black': '#010515',
+          'brand-tekhelet-2': '#482A82',
+          // Aliases
+          'brand-bg': '#010515',
+          'brand-primary': '#6435AC',
+          'brand-accent': '#4C2E90',
+        },
+        fontFamily: {
+          barlow: ['"Barlow Condensed"', 'sans-serif'],
+        },
       },
     },
     plugins: [],
-  }
+  };
+  

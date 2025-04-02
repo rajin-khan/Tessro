@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import CreateSession from './components/Session/Create';
-import JoinSession from './components/Session/Join';
+import logo from './assets/logo.png'; // ✅ Logo path
 import StreamRoom from './components/StreamRoom.jsx';
+import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
 
 function App() {
@@ -20,11 +20,11 @@ function App() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleSessionCreated = ({ sessionId: newSessionId, error: creationError }) => {
-      if (creationError) {
-        setAppError(`Session creation failed: ${creationError}`);
+    const handleSessionCreated = ({ sessionId: newSessionId, error }) => {
+      if (error) {
+        setAppError(`Session creation failed: ${error}`);
         setSessionId(null);
-      } else if (newSessionId) {
+      } else {
         setSessionId(newSessionId);
         setAppError(null);
       }
@@ -64,12 +64,17 @@ function App() {
   }, [socket]);
 
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col items-center justify-center p-4 text-gray-200">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-brand-violet">Tessro</h1>
-        <p className="text-lg text-gray-400">Real-time. Real fast.</p>
-        <p className="text-sm text-gray-500 mt-2">
-          Server Status: {isConnected ? <span className="text-green-400">Connected</span> : <span className="text-red-400">Disconnected</span>}
+    <div className="min-h-screen bg-brand-bg text-white font-barlow flex flex-col items-center justify-center px-4">
+      <header className="text-center mb-6">
+        <img src={logo} alt="Tessro Logo" className="h-32 mx-auto mb-2" />
+        <p className="text-sm text-gray-400">Real-time. Real fast.</p>
+        <p className="text-xs text-gray-500 mt-1">
+          Status:{' '}
+          {isConnected ? (
+            <span className="text-green-400">Connected</span>
+          ) : (
+            <span className="text-red-400">Disconnected</span>
+          )}
           {isConnected && socket && ` (ID: ${socket.id})`}
         </p>
       </header>
@@ -82,28 +87,12 @@ function App() {
         )}
 
         {!sessionId ? (
-          <div className="w-full max-w-md bg-dark-surface p-6 rounded-lg shadow-lg mx-auto">
-            <div className="flex justify-center space-x-4 mb-4">
-              <button
-                onClick={() => setMode('create')}
-                className={`px-4 py-2 rounded bg-violet-600 ${mode === 'create' ? 'opacity-100' : 'opacity-60'}`}
-              >
-                Create
-              </button>
-              <button
-                onClick={() => setMode('join')}
-                className={`px-4 py-2 rounded bg-yellow-500 ${mode === 'join' ? 'opacity-100' : 'opacity-60'}`}
-              >
-                Join
-              </button>
-            </div>
-
-            {mode === 'create' ? (
-              <CreateSession socket={socket} isConnected={isConnected} />
-            ) : (
-              <JoinSession socket={socket} isConnected={isConnected} />
-            )}
-          </div>
+          <Landing
+            mode={mode}
+            setMode={setMode}
+            socket={socket}
+            isConnected={isConnected}
+          />
         ) : (
           <StreamRoom
             socket={socket}
@@ -114,8 +103,9 @@ function App() {
         )}
       </main>
 
-      <footer className="mt-8 text-center text-gray-500 text-xs">
+      <footer className="mt-10 text-center text-gray-600 text-xs">
         Developed by Rajin Khan
+        (visit rajinkhan.com)
       </footer>
     </div>
   );

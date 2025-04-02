@@ -54,22 +54,22 @@ function JoinSession({ socket, isConnected }) {
 
   if (joined) {
     return (
-      <div className="text-green-400 text-center mt-4">
+      <div className="text-green-400 text-center mt-4 font-barlow">
         ✅ Joined session successfully!
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto">
-      <h2 className="text-xl font-semibold text-center text-gray-200">Join a Session</h2>
+    <div className="flex flex-col items-center space-y-5 w-full font-barlow">
+      <h2 className="text-lg font-semibold text-center text-white">Join a Session</h2>
 
       <input
         type="text"
         placeholder="Session ID"
         value={sessionId}
         onChange={(e) => setSessionId(e.target.value)}
-        className="w-full px-4 py-2 rounded-md bg-dark-bg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+        className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-primary/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
       />
 
       <input
@@ -77,7 +77,7 @@ function JoinSession({ socket, isConnected }) {
         placeholder="Session Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full px-4 py-2 rounded-md bg-dark-bg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+        className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-primary/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
       />
 
       <input
@@ -85,7 +85,7 @@ function JoinSession({ socket, isConnected }) {
         placeholder="Your Nickname"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
-        className="w-full px-4 py-2 rounded-md bg-dark-bg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-tekhelet/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-tekhelet transition"
       />
 
       {error && (
@@ -95,7 +95,7 @@ function JoinSession({ socket, isConnected }) {
       <button
         onClick={handleJoin}
         disabled={!isConnected || isJoining}
-        className={`w-full px-4 py-2 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition ${
+        className={`w-full px-4 py-2 rounded-full font-medium bg-brand-primary text-white hover:bg-brand-tekhelet transition ${
           (!isConnected || isJoining) ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >

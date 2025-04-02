@@ -5,10 +5,14 @@ import ChatMessages from './Messages.jsx';
 
 function Chat({ socket, sessionId, messages, sendMessage }) {
   return (
-    <div className="w-full">
+    <div className="flex flex-col h-full">
       <h3 className="text-gray-300 text-sm mb-2">Chat</h3>
-      <ChatMessages messages={messages} selfId={socket.id} />
-      <div className="mt-4">
+
+      <div className="flex-1 overflow-hidden">
+        <ChatMessages messages={messages} selfId={socket.id} />
+      </div>
+
+      <div className="mt-2">
         <ChatInput onSend={sendMessage} />
       </div>
     </div>

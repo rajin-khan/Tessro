@@ -8,3 +8,34 @@ body {
   @apply bg-dark-bg text-gray-200 antialiased;
   font-family: 'Inter', sans-serif; /* Add a nice font later */
 }
+
+@keyframes slideInRight {
+    0% {
+      transform: translateX(30%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(-30%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+  }
+  
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out;
+  }
+  
