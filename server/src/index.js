@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
 
 // ✅ Fallback route for React SPA (must come *after* all handlers)
 app.get('/:wildcard(*)', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
