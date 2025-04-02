@@ -4,6 +4,8 @@ import { Server } from 'socket.io';
 import { registerSessionHandlers } from './handlers/session.js';
 import { registerSyncHandlers } from './handlers/sync.js';
 import { registerChatHandlers } from './handlers/chat.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const httpServer = createServer(app);
@@ -77,6 +79,17 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+});
+
 httpServer.listen(PORT, () => {
   console.log(`Tessro server listening on port ${PORT}`);
   console.log(`Allowing connections from origin: ${clientURL}`);

@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "react-icons": "^5.5.0"
-  }
-}
+    "name": "tessro-monorepo",
+    "private": true,
+    "version": "1.0.0",
+    "scripts": {
+      "postinstall": "cd client && npm install && npm run build && cd ../server && npm install",
+      "start": "cd server && npm run start",
+      "dev": "cd server && npm run dev"
+    },
+    "engines": {
+      "node": ">=18"
+    }
+  }  
