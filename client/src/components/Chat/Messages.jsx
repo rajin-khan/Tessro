@@ -1,4 +1,3 @@
-// client/src/components/Chat/Messages.jsx
 import React, { useEffect, useRef } from 'react';
 
 const avatarColors = [
@@ -24,16 +23,20 @@ function ChatMessages({ messages, selfId }) {
   }, [messages]);
 
   return (
-    <div className="flex flex-col gap-4 overflow-y-auto px-1 py-2 h-full">
+    <div
+      className="flex flex-col gap-4 overflow-y-auto px-1 py-2 h-full"
+      role="log"
+      aria-live="polite"
+    >
       {messages.map((msg, i) => {
         const isSelf = msg.senderId === selfId;
         const avatarColor = getAvatarColor(msg.senderId);
+        const key = msg.id || msg.timestamp || i;
+
         return (
           <div
-            key={msg.timestamp || i}
-            className={`flex items-end space-x-2 ${
-              isSelf ? 'justify-end' : 'justify-start'
-            }`}
+            key={key}
+            className={`flex items-end space-x-2 ${isSelf ? 'justify-end' : 'justify-start'}`}
           >
             {!isSelf && (
               <div
@@ -44,13 +47,17 @@ function ChatMessages({ messages, selfId }) {
               </div>
             )}
             <div
-              className={`px-4 py-2 rounded-2xl max-w-xs text-sm break-words shadow transition-transform duration-200 ${
+              className={`px-4 py-2 rounded-2xl max-w-[75%] sm:max-w-xs md:max-w-sm lg:max-w-md text-sm break-words shadow transition-transform duration-200 relative group ${
                 isSelf
                   ? 'bg-brand-primary text-white rounded-br-none animate-slide-in-right'
                   : 'bg-brand-tekhelet/40 text-white rounded-bl-none animate-slide-in-left'
               }`}
             >
               {msg.text}
+              {/* Optional timestamp on hover */}
+              <span className="absolute bottom-[-1.1rem] right-2 text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                {msg.timestamp && new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
           </div>
         );

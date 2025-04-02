@@ -33,10 +33,9 @@ export function useSocket() {
     }
 
     return () => {
-      // Optional cleanup (uncomment only if you need per-component listeners)
-      // socket.off('connect', handleConnect);
-      // socket.off('disconnect', handleDisconnect);
-      // socket.off('connect_error', handleError);
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleError);
     };
   }, []);
 

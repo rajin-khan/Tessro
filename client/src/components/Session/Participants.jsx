@@ -1,4 +1,3 @@
-// client/src/components/Session/Participants.jsx
 import React from 'react';
 
 function getInitials(nickname = 'G') {
@@ -26,25 +25,29 @@ function Participants({ participants = [], hostId, selfId }) {
           const isSelf = user.id === selfId;
           const isHost = user.id === hostId;
           const avatarColor = getAvatarColor(user.id);
+          const fallbackName = user.nickname || `Guest${user.id.slice(-4)}`;
 
           return (
             <li
               key={user.id}
-              className="flex items-center justify-between text-white"
+              className="flex items-center justify-between text-white animate-fade-in"
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-semibold text-white shadow ${avatarColor}`}
-                  title={user.nickname}
+                  title={fallbackName}
                 >
-                  {getInitials(user.nickname)}
+                  {getInitials(fallbackName)}
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium">
-                    {user.nickname || 'Guest'}
+                    {fallbackName}
                   </span>
                   {isHost && (
-                    <span className="text-[10px] text-yellow-400 font-semibold">
+                    <span
+                      title="You are the host"
+                      className="text-[10px] text-yellow-400 font-semibold"
+                    >
                       Host 👑
                     </span>
                   )}
@@ -52,7 +55,12 @@ function Participants({ participants = [], hostId, selfId }) {
               </div>
 
               {isSelf && (
-                <span className="text-[10px] text-gray-400 italic">(You)</span>
+                <span
+                  title="This is you"
+                  className="text-[10px] text-gray-400 italic"
+                >
+                  (You)
+                </span>
               )}
             </li>
           );
