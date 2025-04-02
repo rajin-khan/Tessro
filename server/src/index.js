@@ -22,14 +22,20 @@ const io = new Server(httpServer, {
 const sessions = new Map();
 const socketToSessionMap = new Map();
 
-app.get('/', (req, res) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Serve static files from client/dist
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// ✅ Health check route (optional)
+app.get('/health', (req, res) => {
   res.send('Tessro Server is running!');
 });
 
 io.on('connection', (socket) => {
   console.log(`Client connected: ${socket.id}`);
 
-  // Register handlers
   registerSessionHandlers(io, socket, sessions, socketToSessionMap);
   registerSyncHandlers(io, socket, sessions);
   registerChatHandlers(io, socket, sessions);
@@ -37,34 +43,23 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
     const sessionId = socketToSessionMap.get(socket.id);
-  
+
     if (sessionId) {
       const sessionData = sessions.get(sessionId);
-  
+
       if (sessionData) {
         sessionData.users = sessionData.users.filter(userId => userId !== socket.id);
-        console.log(`User ${socket.id} removed from session ${sessionId}. Remaining: ${sessionData.users.length}`);
-  
-        // HOST DISCONNECTED
+
         if (sessionData.host === socket.id) {
-          console.log(`Host disconnected. Deleting session ${sessionId}.`);
           sessions.delete(sessionId);
           io.to(sessionId).emit('session:host_disconnected', { message: 'Host disconnected, session ended.' });
           io.socketsLeave(sessionId);
-        }
-  
-        // LAST USER LEFT
-        else if (sessionData.users.length === 0) {
-          console.log(`Last user left session ${sessionId}. Deleting session.`);
+        } else if (sessionData.users.length === 0) {
           sessions.delete(sessionId);
-        }
-  
-        // JUST A REGULAR USER LEFT
-        else {
+        } else {
           sessions.set(sessionId, sessionData);
           io.to(sessionId).emit('user:left', { userId: socket.id });
-  
-          // 🔁 EMIT UPDATED PARTICIPANTS LIST
+
           const updatedParticipants = sessionData.users.map(id => ({
             id,
             nickname: sessionData.nicknames?.[id] || 'Guest'
@@ -72,24 +67,18 @@ io.on('connection', (socket) => {
           io.to(sessionId).emit('session:participants', { participants: updatedParticipants });
         }
       }
-  
+
       socketToSessionMap.delete(socket.id);
     }
-  });  
+  });
 });
 
-const PORT = process.env.PORT || 3001;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-
-app.use(express.static(path.join(__dirname, '../../client/dist')));
-
+// ✅ Fallback route for React SPA (must come *after* all handlers)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
+const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
   console.log(`Tessro server listening on port ${PORT}`);
   console.log(`Allowing connections from origin: ${clientURL}`);
