@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 
 // Ensure this URL points to your server (running on port 3001 by default)
-const URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export const socket = io(URL, {
   autoConnect: false // We will connect manually
