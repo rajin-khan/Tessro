@@ -3,7 +3,9 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
 
 import { registerSessionHandlers } from './handlers/session.js';
 import { registerSyncHandlers } from './handlers/sync.js';
@@ -26,6 +28,13 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later'
 });
 app.use(limiter);
+
+const speedLimiter = slowDown({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    delayAfter: 50, // allow 50 requests per window without delay
+    delayMs: 500 // add 500ms delay per request after limit
+  });
+  app.use(speedLimiter);
 
 const io = new Server(httpServer, {
   cors: {
