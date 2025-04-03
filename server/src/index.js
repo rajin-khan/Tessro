@@ -73,10 +73,10 @@ io.on('connection', (socket) => {
   });
 });
 
-// ✅ Fallback route for React SPA (must come *after* all handlers)
-app.get('/:wildcard(*)', (req, res) => {
+// Use middleware as the catch-all
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-});
+  });
 
 const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
