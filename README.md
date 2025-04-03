@@ -111,13 +111,13 @@ Whether it's for a long-distance movie night, online training, or collaborative 
 
 ---
 
-## 👨‍💻 Author
+## **👨‍💻 Dev Team**
 
-| Name         | Institution             | ID          | GitHub |
-|--------------|--------------------------|-------------|--------|
-| **Rajin Khan** | North South University | 2212708042 | [@rajin-khan](https://github.com/rajin-khan) |
+Just me, actually.
 
-[![Follow Rajin](https://img.shields.io/github/followers/rajin-khan?label=Follow&style=social)](https://github.com/rajin-khan)
+| Name                      | Institution             | ID | GitHub | Followers |
+|---------------------------|-------------------------|--  |--------|------|
+| **Rajin Khan**            | North South University | 2212708042 | [![Rajin's GitHub](https://img.shields.io/badge/-rajin--khan-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rajin-khan) | ![Followers](https://img.shields.io/github/followers/rajin-khan?label=Follow&style=social) |
 
 ---
 
