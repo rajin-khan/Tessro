@@ -1,2 +1,27 @@
 specs.md
 */.env
+# Ignore node_modules and build artifacts
+node_modules/
+dist/
+*.log
+
+# Ignore environment files
+.env
+.env.*  # like .env.local
+
+# Ignore system/editor files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.sw?
+*.njsproj
+*.sln
+
+# Ignore client/server lockfiles if not root-level
+client/package-lock.json
+server/package-lock.json
+
+# DO NOT IGNORE the final built frontend files (they need to be served)
+# So we do NOT ignore this (used by Express):
+# /server/client-dist
