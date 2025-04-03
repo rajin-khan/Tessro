@@ -1,13 +1,11 @@
 {
-    "name": "tessro-monorepo",
+    "name": "tessro",
     "private": true,
-    "version": "1.0.0",
+    "workspaces": ["client", "server"],
     "scripts": {
-      "postinstall": "cd client && npm install && npm run build && cd ../server && npm install",
-      "start": "cd server && npm run start",
-      "dev": "cd server && npm run dev"
-    },
-    "engines": {
-      "node": ">=18"
+      "build": "npm run build:client && npm run build:server",
+      "build:client": "cd client && npm run build",
+      "build:server": "cd server && npm run build",
+      "start": "cd server && npm start"
     }
-  }  
+  }
