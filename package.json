@@ -1,11 +1,19 @@
 {
     "name": "tessro",
     "private": true,
-    "workspaces": ["client", "server"],
+    "workspaces": [
+        "client",
+        "server"
+    ],
     "scripts": {
-      "build": "npm run build:client && npm run build:server",
-      "build:client": "cd client && npm run build",
-      "build:server": "cd server && npm run build",
-      "start": "cd server && npm start"
+        "build": "npm run build:client && npm run build:server",
+        "build:client": "cd client && npm run build",
+        "build:server": "cd server && npm run build",
+        "start": "cd server && npm start"
+    },
+    "dependencies": {
+        "express-rate-limit": "^7.5.0",
+        "express-slow-down": "^2.0.3",
+        "helmet": "^8.1.0"
     }
-  }
+}

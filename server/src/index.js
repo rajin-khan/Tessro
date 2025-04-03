@@ -4,6 +4,11 @@ import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// 🛡️ Security packages
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
+
 import { registerSessionHandlers } from './handlers/session.js';
 import { registerSyncHandlers } from './handlers/sync.js';
 import { registerChatHandlers } from './handlers/chat.js';
@@ -16,6 +21,25 @@ const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// 🛡️ Apply helmet for HTTP header protection
+app.use(helmet());
+
+// 🚫 Global rate limiter (100 requests per 15 min)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
+app.use(limiter);
+
+// 🐌 Slow down brute-force joins
+const joinSpeedLimiter = slowDown({
+  windowMs: 15 * 60 * 1000,
+  delayAfter: 20, // after 20 requests
+  delayMs: 300,   // 300ms delay per request
+});
+app.use('/session/join', joinSpeedLimiter);
+
 const io = new Server(httpServer, {
   cors: {
     origin: clientURL,
@@ -24,7 +48,6 @@ const io = new Server(httpServer, {
 });
 
 const rootDir = path.join(__dirname, '../../client/dist');
-
 app.use(express.static(rootDir));
 app.use((req, res) => {
   res.sendFile(path.join(rootDir, 'index.html'));
