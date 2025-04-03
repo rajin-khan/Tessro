@@ -109,7 +109,19 @@ function App() {
       </main>
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
-        Developed by Rajin Khan (visit rajinkhan.com)
+        <p className="text-sm text-gray-400">Tessro works best when used on a laptop or desktop computer.</p>
+        <p className="text-xs text-gray-400">
+          Developed by Rajin Khan (
+          <a
+            href="https://rajinkhan.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-primary hover:underline"
+          >
+            visit rajinkhan.com
+          </a>
+          )
+        </p>
       </footer>
     </div>
   );
