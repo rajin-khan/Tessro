@@ -26,7 +26,6 @@ function ChatMessages({ messages, selfId }) {
                 title={nickname}
               />
             )}
-
             <div
               className={`px-4 py-2 rounded-2xl max-w-xs text-sm break-words shadow transition-transform duration-200 ${
                 isSelf
