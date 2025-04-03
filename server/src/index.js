@@ -3,6 +3,10 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// Import security packages
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
 
 import { registerSessionHandlers } from './handlers/session.js';
 import { registerSyncHandlers } from './handlers/sync.js';
@@ -16,6 +20,28 @@ const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// Apply security middleware
+// Add helmet for setting secure HTTP headers
+app.use(helmet());
+
+// Add rate limiting to prevent brute force attacks
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again later'
+});
+app.use(limiter);
+
+// Add speed limiting to slow down automated attacks
+const speedLimiter = slowDown({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  delayAfter: 50, // allow 50 requests per window without delay
+  delayMs: 500 // add 500ms delay per request after limit
+});
+app.use(speedLimiter);
+
 const io = new Server(httpServer, {
   cors: {
     origin: clientURL,
@@ -25,13 +51,14 @@ const io = new Server(httpServer, {
 
 const rootDir = path.join(__dirname, '../../client/dist');
 
+// Move health check route before the catch-all route to make it accessible
+app.get('/health', (req, res) => {
+  res.send('Tessro Server is running!');
+});
+
 app.use(express.static(rootDir));
 app.use((req, res) => {
   res.sendFile(path.join(rootDir, 'index.html'));
-});
-
-app.get('/health', (req, res) => {
-  res.send('Tessro Server is running!');
 });
 
 // In-memory session state
@@ -43,7 +70,7 @@ io.on('connection', (socket) => {
   registerSessionHandlers(io, socket, sessions, socketToSessionMap);
   registerSyncHandlers(io, socket, sessions);
   registerChatHandlers(io, socket, sessions);
-
+  
   socket.on('disconnect', () => {
     const sessionId = socketToSessionMap.get(socket.id);
     if (sessionId) {
