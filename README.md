@@ -17,7 +17,7 @@
 
 ---
 
-### **💻 V1 Live Now! →** [tessro.app](https://rajinkhan.com)
+### **💻 V1 Live Now! →** [tessro.app](https://tessro-production.up.railway.app/)
 
 
 
