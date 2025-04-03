@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
 
 // Use middleware as the catch-all
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    res.sendFile(path.join(__dirname, 'public/dist/index.html'));
   });
 
 const PORT = process.env.PORT || 3001;
