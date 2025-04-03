@@ -3,8 +3,6 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// Import security packages
-import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import { registerSessionHandlers } from './handlers/session.js';
@@ -18,10 +16,6 @@ const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
-
-// Apply security middleware
-// Add helmet for setting secure HTTP headers
-app.use(helmet());
 
 // Add rate limiting to prevent brute force attacks
 const limiter = rateLimit({
