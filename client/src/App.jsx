@@ -110,7 +110,8 @@ function App() {
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
         <p className="text-sm text-gray-400">Tessro works best when used on a laptop or desktop computer.</p>
-        Each session is currently limited to 7 users. Tessro is free and always will be.
+        <p>Each session is currently limited to 7 users, but if you have a large friend group, hit me up. I'll change it temporarily. </p>
+        <p>Oh, and Tessro will always be free.</p>
         <p className="text-xs text-gray-400">
           Developed by Rajin Khan (
           <a
@@ -123,7 +124,6 @@ function App() {
           </a>
           )
         </p>
-        Also, if you have a large friend group, hit me up. I'll change the user limit temporarily.
       </footer>
     </div>
   );
