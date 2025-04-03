@@ -23,15 +23,15 @@ const io = new Server(httpServer, {
   }
 });
 
-// Serve static files from the client build
-app.use(express.static(path.join(__dirname, '../client/dist')));
+const rootDir = path.join(__dirname, '../../client/dist');
+
+app.use(express.static(rootDir));
+app.use((req, res) => {
+  res.sendFile(path.join(rootDir, 'index.html'));
+});
 
 app.get('/health', (req, res) => {
   res.send('Tessro Server is running!');
-});
-
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 // In-memory session state

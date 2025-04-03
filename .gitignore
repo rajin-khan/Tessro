@@ -3,6 +3,7 @@ specs.md
 # Ignore node_modules and build artifacts
 node_modules/
 dist/
+!client/dist
 *.log
 
 # Ignore environment files
