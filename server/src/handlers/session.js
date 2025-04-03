@@ -33,38 +33,44 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
   });
 
   /**
-   * Join Session
-   */
-  socket.on('session:join', ({ sessionId, password, nickname }) => {
+ * Join Session
+ */
+socket.on('session:join', ({ sessionId, password, nickname }) => {
     const session = sessions.get(sessionId);
-
+  
     if (!session) {
       socket.emit('session:error', { error: 'Session not found.' });
       return;
     }
-
+  
     if (session.password && session.password !== password) {
       socket.emit('session:error', { error: 'Incorrect password.' });
       return;
     }
-
+  
+    const MAX_USERS = 7;
+    if (session.users.length >= MAX_USERS) {
+      socket.emit('session:error', { error: 'This session is full. Please try again later.' });
+      return;
+    }
+  
     const name = nickname?.trim() || `Guest${Math.floor(Math.random() * 1000)}`;
-
+  
     session.users.push({
       id: socket.id,
       nickname: name,
     });
-
+  
     socketToSessionMap.set(socket.id, sessionId);
     socket.join(sessionId);
     sessions.set(sessionId, session);
-
+  
     console.log(`[session] ${name} (${socket.id}) joined session ${sessionId}`);
     socket.emit('session:joined', { sessionId });
-
+  
     io.to(sessionId).emit('user:joined', { userId: socket.id, nickname: name });
     io.to(sessionId).emit('session:participants', { participants: session.users });
-  });
+  });  
 
   /**
    * Leave Session
