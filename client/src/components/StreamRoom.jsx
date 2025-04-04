@@ -4,7 +4,8 @@ import VideoPlayer from './VideoPlayer';
 import Chat from './Chat';
 import Participants from './Session/Participants';
 import SessionInfo from './Session/Info';
-import ConfirmLeaveModal from './Session/ConfirmLeaveModal'; // ✅ NEW
+import ConfirmLeaveModal from './Session/ConfirmLeaveModal';
+import VoiceChat from './VoiceChat';
 
 function StreamRoom({ socket, sessionId, participants, onLeave }) {
   const hostId = participants[0]?.id;
@@ -12,7 +13,7 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
   const [showSidebar, setShowSidebar] = useState(true);
   const [messages, setMessages] = useState([]);
   const [mobileView, setMobileView] = useState('chat');
-  const [showLeaveModal, setShowLeaveModal] = useState(false); // ✅ NEW
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   useEffect(() => {
     const handleMessage = (msg) => {
@@ -51,7 +52,6 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
     });
   };
 
-  // 💡 Graceful disconnect on browser/tab close
   useEffect(() => {
     const handleUnload = () => {
       if (socket && sessionId) {
@@ -69,7 +69,7 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
         {/* Left Area */}
         <div className={`p-5 transition-all duration-200 ${showSidebar ? 'md:w-3/4' : 'w-full'} w-full flex flex-col overflow-y-auto`}>
           <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-            {/* ✅ Custom Leave Button */}
+            {/* Leave Button */}
             <button
               onClick={() => setShowLeaveModal(true)}
               className="text-sm px-3 py-1 rounded-full border border-red-400 text-red-400 hover:bg-red-500 hover:text-white transition-all"
@@ -90,10 +90,8 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
                 </button>
               </div>
 
-              {/* Session Info */}
               <SessionInfo sessionId={sessionId} />
 
-              {/* Toggle Chat Desktop */}
               <button
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="hidden md:block text-sm px-3 py-1 rounded-full border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-all"
@@ -103,7 +101,7 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
             </div>
           </div>
 
-          {/* 🎥 Video */}
+          {/* Video Player */}
           <VideoPlayer socket={socket} sessionId={sessionId} />
         </div>
 
@@ -119,6 +117,12 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
                 sendMessage={sendMessage}
               />
             </div>
+            {/* ✅ Voice Chat */}
+            <VoiceChat
+              socket={socket}
+              sessionId={sessionId}
+              selfId={selfId}
+            />
           </div>
         )}
 
@@ -134,12 +138,17 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
                 messages={messages}
                 sendMessage={sendMessage}
               />
+              {/* ✅ Voice Chat Mobile */}
+              <VoiceChat
+                socket={socket}
+                sessionId={sessionId}
+                selfId={selfId}
+              />
             </div>
           )}
         </div>
       </div>
 
-      {/* ✅ Confirmation Modal */}
       <ConfirmLeaveModal
         isOpen={showLeaveModal}
         onCancel={() => setShowLeaveModal(false)}

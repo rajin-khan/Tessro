@@ -10,6 +10,7 @@ import slowDown from 'express-slow-down';
 import { registerSessionHandlers } from './handlers/session.js';
 import { registerSyncHandlers } from './handlers/sync.js';
 import { registerChatHandlers } from './handlers/chat.js';
+import { registerVoiceHandlers } from './handlers/voice.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,7 @@ io.on('connection', (socket) => {
   registerSessionHandlers(io, socket, sessions, socketToSessionMap);
   registerSyncHandlers(io, socket, sessions);
   registerChatHandlers(io, socket, sessions);
+  registerVoiceHandlers(io, socket);
   
   socket.on('disconnect', () => {
     const sessionId = socketToSessionMap.get(socket.id);
