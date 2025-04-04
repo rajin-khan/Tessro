@@ -17,15 +17,15 @@ function TermsModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/50 transition-opacity duration-300"
+      className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-brand-dark-purple text-white p-6 rounded-2xl shadow-xl max-w-lg w-full mx-4 relative animate-fade-in"
+        className="bg-brand-dark-purple text-white p-6 rounded-2xl shadow-xl w-full max-w-xl mx-auto animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-semibold mb-4 text-brand-primary">Terms of Service</h2>
-        <div className="text-sm text-gray-300 space-y-3 max-h-[60vh] overflow-y-auto">
+        <h2 className="text-xl font-semibold mb-4 text-brand-primary">🧐 Terms of Service</h2>
+        <div className="text-sm text-gray-300 space-y-3 max-h-[65vh] overflow-y-auto pr-2">
           <p>
             By using Tessro, you acknowledge and agree to the following terms:
           </p>
@@ -63,12 +63,11 @@ function TermsModal({ isOpen, onClose }) {
           </p>
         </div>
 
-        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white transition"
+          className="mt-6 block ml-auto px-5 py-2 rounded-full bg-brand-primary hover:bg-brand-tekhelet transition text-sm"
         >
-          ✕
+          Close
         </button>
       </div>
     </div>
