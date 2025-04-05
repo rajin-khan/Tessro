@@ -6,7 +6,7 @@
 <p align="center"><strong>Real-time. Real fast. Fully private.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-v1 running-green" alt="Status Badge">
+  <img src="https://img.shields.io/badge/status-v2.0.0 running-green" alt="Status Badge">
   <img src="https://img.shields.io/badge/built_with-React-blue?logo=react" alt="React Badge">
   <img src="https://img.shields.io/badge/backend-Node.js-yellow?logo=node.js" alt="Node.js Badge">
   <img src="https://img.shields.io/badge/deployment-Railway-black?logo=railway" alt="Railway Badge">
@@ -17,7 +17,7 @@
 
 ---
 
-### **💻 V1 Live Now! →** [tessro.app](https://tessro-production.up.railway.app/)
+### **💻 V1 Live Now! →** [tessro.com](https://tessro.com/)
 
 
 
@@ -29,91 +29,105 @@ https://github.com/user-attachments/assets/df068085-cc06-45f4-aebe-c4bfac24f215
 
 ## 🎥 What is Tessro?
 
-**Tessro** is a blazing-fast real-time synchronized video playback platform. It lets friends, teams, and entire communities **watch videos together** — in perfect sync, no matter where they are.
+**Tessro** is a blazing-fast real-time synchronized video playback platform that just got even better. Whether you're across the world or across the room, Tessro brings friends and teams together with seamless, **fully private video sessions**.
 
-💡 No need for streaming accounts or uploads. Users pick the same **local video file**, and Tessro handles:
-- 🔁 Real-time playback sync  
-- 💬 Real-time chat  
-- 🔒 Secure session control  
+🚀 You can now choose between two modes:
+
+- 🌀 **Sync Mode** — Everyone picks the same local video file, and Tessro syncs playback across devices.
+- 📡 **Stream Mode** — The host selects a file, and others watch the host’s stream in real-time, thanks to **WebRTC**.
+
+**All with:**
+- ❌ No uploads  
+- 🔐 No accounts  
+- 👀 No tracking  
+- 🔄 Real-time sync  
+- 💬 Live chat  
 
 ---
 
 ## 💡 The Vision
 
-> *Bring back the joy of shared watching — personal, private, and perfectly in sync.*
+> *Bring back the joy of watching together — personal, private, and perfectly in sync.*
 
-Whether it's for a long-distance indie film night, online training, or collaborative film review, Tessro creates a shared, connected experience.
-
----
-
-## ✅ MVP Features
-
-- 🎬 Synchronized playback across users  
-- 🗂️ Local file selection (no server uploads)  
-- 🔐 Secure sessions with nickname & password  
-- 💬 Integrated real-time chat  
-- 👥 Participant tracking  
-- 📱 Mobile-friendly & responsive UI
+Tessro is ideal for:
+- 🎞️ Movie nights
+- 🎓 Online training
+- 📽️ Remote film reviews
+- 🤝 Connecting with loved ones
 
 ---
 
-## 🔜 Coming Soon
+## ✅ Core Features (v2.0)
 
-- 🌐 WebRTC peer streaming (no need for same local file)  
-- 👤 User accounts & persistent sessions  
-- 📝 Subtitle syncing  
-- 📲 Native mobile apps  
+| Feature                          | Status | Notes                                                             |
+|----------------------------------|--------|--------------------------------------------------------------------|
+| 🔁 Sync Mode                     | ✅     | File-based synchronization with hash matching                     |
+| 📡 Stream Mode (WebRTC)          | ✅     | Host streams video to all guests via peer-to-peer                 |
+| 🔐 Secure Sessions               | ✅     | Password-protected, nickname-based login                          |
+| 💬 Live Chat                     | ✅     | Scrollable, with sender info and timestamps                       |
+| 👥 Participant List              | ✅     | Real-time with host/you indicators                                |
+| 🧠 Smart Cleanup                 | ✅     | Host leaving ends session, guests gracefully exit                 |
+| 🛡️ Private, Peer-to-Peer        | ✅     | WebRTC ensures direct connections — **no centralized relaying**  |
+| 📱 Mobile-Friendly               | ✅     | Drawer-based mobile layout with responsive design                 |
 
 ---
-
-## ⚙️ Tech Stack
-
-### 🌐 Frontend
-- **React** + **Vite** — lightning-fast dev/build
-- **Tailwind CSS** — utility-first styling
-- **React Player** — for handling media
-- **Socket.IO Client** — real-time messaging
-
-### 🖥 Backend
-- **Node.js + Express** — server & API
-- **Socket.IO** — sync engine + chat
-- **Railway** — deployment
 
 ---
 
 ## 🧐 How It Works
 
-1. Host selects a local file & creates a session  
-2. Guests choose the same file & join with a session ID/password  
-3. All playback events (play, pause, seek) are broadcast instantly  
-4. Real-time chat and participant updates keep everyone connected
+1. 🔧 **Create Session** — As a host, generate a session and choose a file.
+2. 🔑 **Invite Others** — Friends join with your session ID and password.
+3. 🌀 **Pick Your Mode** — Sync files or just let the host stream.
+4. ⏯️ **Watch Together** — Tessro handles syncing, controls, and chat!
 
 ---
 
-## 🛠 Feature Checklist (MVP)
+## 🔒 Privacy First
 
-| Feature                                | Status | Notes                                      |
-|----------------------------------------|--------|---------------------------------------------|
-| Connection + socket setup              | ✅     | Robust with visual status indicator         |
-| Session creation/joining               | ✅     | With nickname & password                    |
-| Local file selection & hash validation | ✅     | Enforces same file on all users             |
-| Playback controls                      | ✅     | Syncs play, pause, seek                     |
-| Real-time chat                         | ✅     | Autoscroll, nickname tags                   |
-| Participants list                      | ✅     | Real-time, host/self distinction            |
-| Leave/cleanup logic                    | ✅     | Host disconnect ends session cleanly        |
-| Responsive UI                          | ✅     | Mobile drawer toggle for chat/participants  |
-| Error handling                         | ✅     | Covers all key edge cases                   |
+Tessro:
+- Stores **no user data**
+- Uses **no uploads**
+- Supports **end-to-end WebRTC streaming**
+- Has **no trackers, ads, or analytics**
+
+Coming soon: self-hosted TURN fallback for even better firewall/NAT support.
 
 ---
 
-## 📌 Roadmap
+## 🧱 Tech Stack
 
-- [x] Local file sync
-- [x] Chat & participants list
-- [ ] Peer streaming (WebRTC)
-- [ ] Subtitle sync
-- [ ] Persistent user accounts (maybe)
-- [ ] Native apps
+### Frontend
+- ⚛️ **React** + **Vite**
+- 🎨 **Tailwind CSS**
+- 📺 **React Player**
+- ⚡ **Socket.IO Client**
+
+### Backend
+- 🖥 **Node.js + Express**
+- 📡 **Socket.IO** for sync/chat
+- 🚉 **Railway** deployment (soon migrating to scalable cloud)
+
+### WebRTC
+- 🔄 **Peer-to-Peer media streaming**
+- 🌍 STUN/TURN-ready with fallback handling
+- 🔐 Future TURN servers with full privacy (currently using free 24h servers on Twilio)
+
+---
+
+## 🔮 Roadmap
+
+| Feature                          | Status      |
+|----------------------------------|-------------|
+| ✅ Real-time Sync Mode           | Completed   |
+| ✅ WebRTC Peer Streaming         | Completed   |
+| ⏳ Voice Chat                    | In Progress |
+| ⏳ Emoji Reactions               | In Progress |
+| ⏳ Subtitle Syncing              | Planning    |
+| ⏳ Self-hosted TURN server       | Planning    |
+| ⏳ Native Mobile App             | Planning    |
+| ⏳ Offline LAN-only Mode         | Planning    |
+| ⏳ Persistent Accounts (Optional) | Not in Vision, but may integrate on request    |
 
 ---
 
@@ -128,5 +142,9 @@ Just me, actually.
 ---
 
 ### ⭐ **Star this repo if you want more cool stuff like this!**
+
+## 🚀 Want to Contribute?
+
+Tessro is open-source, and minimalist. PRs are welcome!
 
 </div>
