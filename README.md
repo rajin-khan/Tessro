@@ -17,7 +17,7 @@
 
 ---
 
-### **💻 V1 Live Now! →** [tessro.com](https://tessro.com/)
+### **💻 V2 Live Now! →** [tessro.com](https://tessro.com/)
 
 
 
