@@ -115,7 +115,7 @@ function App() {
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
         <p className="text-sm text-gray-400">
-          Tessro works best when used on a laptop or desktop computer. Stream mode may experience issues on Mobile.
+          Tessro works best when used on a laptop or desktop computer. Stream mode in beta, may experience issues, especially on Mobile.
         </p>
         <p>
           Each session is currently limited to 7 users. If you have a large friend group,
