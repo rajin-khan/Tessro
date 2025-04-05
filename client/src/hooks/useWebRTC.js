@@ -9,6 +9,22 @@ const ICE_SERVERS = [
     { urls: "stun:stun4.l.google.com:19302" },
     // { urls: "stun:stun.services.mozilla.com" }, // Mozilla's requires Firefox >= 65
     // Add TURN servers here if you set them up later
+     // Your Twilio STUN server
+     { urls: "stun:global.stun.twilio.com:3478" },
+
+     // Your Twilio TURN server configuration (expires in 24 hours!)
+     {
+       urls: [
+           "turn:global.turn.twilio.com:3478?transport=udp",
+           "turn:global.turn.twilio.com:3478?transport=tcp",
+           "turn:global.turn.twilio.com:443?transport=tcp" // Port 443 TCP
+           // If Twilio intended port 443 to be secure, change the last line to:
+           // "turns:global.turn.twilio.com:443?transport=tcp"
+       ],
+       username: "2e88054e75323d5099920f584e1e0fc20f4bb067eab8e5bb2b64687fa50d8d88",
+       credential: "rVZ1SyDTu/bfza1yD0TpiJPz2foJ3YqgL42Zrp4GfH8=",
+       // credentialType: "password", // Usually optional unless specified
+     },
 ];
 
 /**
