@@ -52,31 +52,42 @@ function Landing({ mode, setMode, socket, isConnected }) {
       </button>
 
       {/* 🧊 Info Modal */}
-      {showInfo && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-brand-rich-black border border-brand-primary/30 p-6 sm:p-8 rounded-2xl max-w-lg sm:max-w-md w-full mx-auto shadow-xl animate-fade-scale-in font-barlow relative">
-            <button
-              onClick={() => setShowInfo(false)}
-              className="absolute top-2 right-3 text-gray-400 hover:text-white text-xl"
-            >
-              ×
-            </button>
-
-            <h2 className="text-2xl font-semibold text-white mb-3">
-              What is Tessro?
-            </h2>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Tessro lets you <strong>sync videos</strong> with friends in real-time — like a watch party, but better. <strong>No uploads, no accounts. Watch whatever you want.</strong>
-            </p>
-            <ul className="mt-4 text-sm text-gray-400 list-disc list-inside space-y-2">
-              <li><strong>Create or join a private session</strong></li>
-              <li><strong>Select a local video file (everyone has to select the same one)</strong></li>
-              <li><strong>Playback is synchronized — pause, play, or seek together</strong></li>
-              <li><strong>Use the built-in chat to talk live while watching!</strong></li>
-            </ul>
+        {showInfo && (
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-brand-rich-black border border-brand-primary/30 p-6 sm:p-8 rounded-2xl max-w-lg sm:max-w-md w-full mx-auto shadow-xl animate-fade-scale-in font-barlow relative">
+              <button
+                onClick={() => setShowInfo(false)}
+                className="absolute top-2 right-3 text-gray-400 hover:text-white text-xl"
+              >
+                ×
+              </button>
+        
+              <h2 className="text-2xl font-semibold text-white mb-3">
+                What is Tessro?
+              </h2>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Tessro lets you <strong>watch videos with friends in perfect sync</strong>, or <strong>stream your screen directly</strong> — all in real-time. <strong>No uploads. No accounts.</strong> Just vibes.
+              </p>
+        
+              <ul className="mt-4 text-sm text-gray-400 list-disc list-inside space-y-2">
+                <li><strong>Create or join a private session</strong> using a unique ID</li>
+                <li><strong>Choose between two modes:</strong></li>
+                <ul className="ml-4 space-y-1">
+                  <li>
+                    🎬 <strong>Sync Mode</strong>: Everyone selects the same local file. Playback stays synced — pause, play, seek together.
+                  </li>
+                  <li>
+                    📡 <strong>Stream Mode</strong>: The host selects a file and streams it to everyone else in real-time. No need for others to have the same file.
+                  </li>
+                </ul>
+                <li><strong>Use the built-in chat</strong> to talk and react live</li>
+                <li className="text-yellow-400">
+                  ⚠️ For best results, stick to one mode throughout your session
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

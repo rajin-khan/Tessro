@@ -1,67 +1,136 @@
-// client/src/components/StreamRoom.jsx
-import React, { useState, useEffect } from 'react';
+// client/src/StreamRoom.jsx
+import React, { useState, useEffect, useMemo } from 'react';
 import VideoPlayer from './VideoPlayer';
 import Chat from './Chat';
 import Participants from './Session/Participants';
 import SessionInfo from './Session/Info';
-import ConfirmLeaveModal from './Session/ConfirmLeaveModal'; // ✅ NEW
+import ConfirmLeaveModal from './Session/ConfirmLeaveModal';
 
-function StreamRoom({ socket, sessionId, participants, onLeave }) {
-  const hostId = participants[0]?.id;
-  const selfId = socket.id;
+// --- Updated Props ---
+// We now expect initialMode to be passed down if available from the join/create response
+function StreamRoom({ socket, sessionId, initialParticipants, initialMode = 'sync', onLeave }) {
+  // --- State Management ---
+  const [participants, setParticipants] = useState(initialParticipants || []);
+  const [sessionMode, setSessionMode] = useState(initialMode); // State for the session mode
   const [showSidebar, setShowSidebar] = useState(true);
   const [messages, setMessages] = useState([]);
   const [mobileView, setMobileView] = useState('chat');
-  const [showLeaveModal, setShowLeaveModal] = useState(false); // ✅ NEW
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
+  // --- Derived State ---
+  const selfId = socket?.id; // Use optional chaining in case socket is briefly null
+  // Calculate hostId and isHost based on the current participants state
+  const hostId = useMemo(() => participants[0]?.id, [participants]);
+  const isHost = useMemo(() => selfId === hostId, [selfId, hostId]);
+
+  // --- Effects ---
+
+  // Listener for participant updates and mode changes
   useEffect(() => {
+    if (!socket) return;
+
+    const handleParticipantsUpdate = ({ participants: updatedParticipants, mode: updatedMode }) => {
+      console.log('Received participants update:', updatedParticipants, 'Mode:', updatedMode);
+      setParticipants(updatedParticipants || []);
+      setSessionMode(updatedMode || 'sync'); // Update mode based on server event
+    };
+
+    const handleUserJoined = ({ userId, nickname }) => {
+      console.log('User joined:', nickname, userId);
+      // Note: We primarily rely on 'session:participants' for the complete list,
+      // but could update incrementally here if needed for immediate feedback.
+      // setParticipants(prev => [...prev, { id: userId, nickname }]); // Example incremental update
+    };
+
+    const handleUserLeft = ({ userId }) => {
+       console.log('User left:', userId);
+       // Note: Relying on 'session:participants' ensures consistency, especially if host leaves.
+       // setParticipants(prev => prev.filter(p => p.id !== userId)); // Example incremental update
+    };
+
+    socket.on('session:participants', handleParticipantsUpdate);
+    if (socket && sessionId) {
+        socket.emit('session:request_participants');
+      }
+
+    socket.on('user:joined', handleUserJoined); // Good for toast notifications, etc.
+    socket.on('user:left', handleUserLeft);   // Good for toast notifications, etc.
+
+    return () => {
+      socket.off('session:participants', handleParticipantsUpdate);
+      socket.off('user:joined', handleUserJoined);
+      socket.off('user:left', handleUserLeft);
+    };
+    // Rerun if socket instance changes (though it shouldn't typically)
+  }, [socket]);
+
+  // Listener for chat messages
+  useEffect(() => {
+    if (!socket) return;
+
     const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
     };
-
-    if (socket && sessionId) {
-      socket.on('chat:message', handleMessage);
-    }
+    socket.on('chat:message', handleMessage);
 
     return () => {
       socket.off('chat:message', handleMessage);
     };
-  }, [socket, sessionId]);
+  }, [socket]); // Only depends on socket
 
-  const sendMessage = (text) => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
-
-    const selfUser = participants.find((p) => p.id === socket.id);
-    const nickname = selfUser?.nickname || 'Me';
-
-    const msg = {
-      id: Date.now(),
-      senderId: socket.id,
-      nickname,
-      text: trimmed,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages((prev) => [...prev, msg]);
-
-    socket.emit('chat:message', {
-      sessionId,
-      message: msg,
-    });
-  };
-
-  // 💡 Graceful disconnect on browser/tab close
+  // Graceful disconnect on browser/tab close
   useEffect(() => {
     const handleUnload = () => {
-      if (socket && sessionId) {
+      // No need to check sessionId here, server handles finding the session via socket.id
+      if (socket?.connected) { // Only emit if still connected
         socket.emit('session:leave');
       }
     };
 
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [socket, sessionId]);
+  }, [socket]); // Only depends on socket
+
+  // --- Functions ---
+
+  const sendMessage = (text) => {
+    const trimmed = text.trim();
+    if (!trimmed || !socket || !sessionId) return;
+
+    const selfUser = participants.find((p) => p.id === selfId);
+    const nickname = selfUser?.nickname || 'Me'; // Fallback nickname
+
+    const msg = {
+      id: `${selfId}-${Date.now()}`, // More unique ID
+      senderId: selfId,
+      nickname,
+      text: trimmed,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Optimistic UI update
+    setMessages((prev) => [...prev, msg]);
+
+    // Emit to server
+    socket.emit('chat:message', {
+      sessionId, // Server already knows session via socket map, but good practice? Maybe remove later.
+      message: msg,
+    });
+  };
+
+  const handleConfirmLeave = () => {
+    setShowLeaveModal(false);
+    if (socket) {
+      socket.emit('session:leave');
+    }
+    onLeave(); // Trigger the callback provided by the parent component
+  };
+
+  // Render nothing or a loading state if essential info is missing
+  if (!socket || !sessionId || !selfId) {
+      // Or return a dedicated loading component
+      return <div className="text-white p-10">Connecting to session...</div>;
+  }
 
   return (
     <>
@@ -69,7 +138,6 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
         {/* Left Area */}
         <div className={`p-5 transition-all duration-200 ${showSidebar ? 'md:w-3/4' : 'w-full'} w-full flex flex-col overflow-y-auto`}>
           <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-            {/* ✅ Custom Leave Button */}
             <button
               onClick={() => setShowLeaveModal(true)}
               className="text-sm px-3 py-1 rounded-full border border-red-400 text-red-400 hover:bg-red-500 hover:text-white transition-all"
@@ -90,8 +158,13 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
                 </button>
               </div>
 
-              {/* Session Info */}
-              <SessionInfo sessionId={sessionId} />
+              {/* --- MODIFIED: Pass socket, mode, isHost to SessionInfo --- */}
+              <SessionInfo
+                socket={socket}
+                sessionId={sessionId}
+                sessionMode={sessionMode}
+                isHost={isHost}
+              />
 
               {/* Toggle Chat Desktop */}
               <button
@@ -103,8 +176,15 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
             </div>
           </div>
 
-          {/* 🎥 Video */}
-          <VideoPlayer socket={socket} sessionId={sessionId} />
+          {/* --- MODIFIED: Pass mode and isHost to VideoPlayer --- */}
+          <VideoPlayer
+            socket={socket}
+            sessionId={sessionId}
+            sessionMode={sessionMode}
+            isHost={isHost}
+            participants={participants} // Pass participants for WebRTC hook later
+            selfId={selfId} // Pass selfId for WebRTC hook later
+          />
         </div>
 
         {/* Right Sidebar — Desktop */}
@@ -113,10 +193,10 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
             <Participants participants={participants} hostId={hostId} selfId={selfId} />
             <div className="flex-1 overflow-y-auto mt-4">
               <Chat
-                socket={socket}
+                socket={socket} // Keep passing socket if Chat needs direct emission
                 sessionId={sessionId}
                 messages={messages}
-                sendMessage={sendMessage}
+                sendMessage={sendMessage} // Pass down the sendMessage function
               />
             </div>
           </div>
@@ -139,15 +219,11 @@ function StreamRoom({ socket, sessionId, participants, onLeave }) {
         </div>
       </div>
 
-      {/* ✅ Confirmation Modal */}
+      {/* Confirmation Modal */}
       <ConfirmLeaveModal
         isOpen={showLeaveModal}
         onCancel={() => setShowLeaveModal(false)}
-        onConfirm={() => {
-          setShowLeaveModal(false);
-          socket.emit('session:leave');
-          onLeave();
-        }}
+        onConfirm={handleConfirmLeave} // Use the handler function
       />
     </>
   );
