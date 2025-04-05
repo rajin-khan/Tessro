@@ -42,7 +42,7 @@ https://github.com/user-attachments/assets/df068085-cc06-45f4-aebe-c4bfac24f215
 
 > *Bring back the joy of shared watching — personal, private, and perfectly in sync.*
 
-Whether it's for a long-distance movie night, online training, or collaborative film review, Tessro creates a shared, connected experience.
+Whether it's for a long-distance indie film night, online training, or collaborative film review, Tessro creates a shared, connected experience.
 
 ---
 
