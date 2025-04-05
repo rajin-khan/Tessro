@@ -115,11 +115,13 @@ function App() {
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
         <p className="text-sm text-gray-400">
-          Tessro works best when used on a laptop or desktop computer. Stream mode in beta, may experience issues, especially on Mobile.
+          Tessro works best when used on a laptop or desktop computer. Streaming servers are reconfigured every 24 hours.
         </p>
         <p>
-          Each session is currently limited to 7 users. If you have a large friend group,
-          hit me up. I'll change it temporarily.
+          Data is NEVER STORED ON ANY SERVER. Any data passing through is always encrypted.
+        </p>
+        <p>
+          Each session is currently limited to 7 users (hit me up to change that).
         </p>
         <p className="text-xs text-gray-400 mt-1">
           Developed by {' '}
