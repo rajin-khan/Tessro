@@ -21,10 +21,10 @@ const ICE_SERVERS = [
            // If Twilio intended port 443 to be secure, change the last line to:
            // "turns:global.turn.twilio.com:443?transport=tcp"
        ],
-       // NEW Username
-      username: "1975cd03329fda8bf14f54c829d7604cdfdda715f49765c4579d8dbcf7c853ef",
-      // NEW Credential
-      credential: "6dvOXLA+EwDb8BX64QggV85I6ydV71kSAjOicumNXEs=",
+       // Username
+      username: "c8c846620c5b4f7948b0d46bf9b86d1a325e6bdecb8bed06bb6dbf37faaa2a36",
+      // Credential
+      credential: "yg1DTHBJRv6ajY18EIwZ4Y5OQ9W7SC6nqAhdz0a4ySg=",
      },
 ];
 
