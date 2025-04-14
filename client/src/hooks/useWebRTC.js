@@ -22,9 +22,9 @@ const ICE_SERVERS = [
            // "turns:global.turn.twilio.com:443?transport=tcp"
        ],
        // Username
-      username: "b1e41658c60479b9230d989578a14b6d3e0f6c31998580a94647c42f1ba2ae0c",
+      username: "731ebf2bc0b0a1b6067e0d1bab161c937fee10f2a319c1adc81ec6eccd5d5bd7",
       // Credential
-      credential: "3qgMPExJrBcidN7hcMzJYneeqRRZvvHOH6PCOksSdBM=",
+      credential: "aFJLjFSR4ZmgcJb4945X/HVT8V7W/pcyiCnV4sRgE2E=",
      },
 ];
 
