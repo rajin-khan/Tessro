@@ -52,7 +52,7 @@ function ServerStatusTimer() {
   return (
     <div className={`text-xs mt-1 flex items-center justify-center gap-1.5 ${textColor}`}>
       <FaRegClock />
-      <span>Streaming Server Reset In: <strong>{timeLeft}</strong></span>
+      <span>Streaming Server Resets In: <strong>{timeLeft}</strong></span>
     </div>
   );
 }
