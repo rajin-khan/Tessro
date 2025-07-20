@@ -1,31 +1,30 @@
+// client/src/hooks/useWebRTC.js
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-// Added more public STUN servers
+
+export const turnCredentials = {
+  lastResetTimestamp: '2025-07-21 01:05', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
+  username: "0d8bee90ddbbdd245c72d8be8ace463f7726d3e216392a862adb60d6547a2fa3", // <--- UPDATE THIS
+  credential: "0cXa5y9flsEEkAY79y+OdljjVPJYk2qT5z4OBqtCJmE=", // <--- UPDATE THIS
+};
+
 const ICE_SERVERS = [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun2.l.google.com:19302" },
     { urls: "stun:stun3.l.google.com:19302" },
     { urls: "stun:stun4.l.google.com:19302" },
-    // { urls: "stun:stun.services.mozilla.com" }, // Mozilla's requires Firefox >= 65
-    // Add TURN servers here if you set them up later
-     // Your Twilio STUN server
-     { urls: "stun:global.stun.twilio.com:3478" },
-
-     // Your Twilio TURN server configuration (expires in 24 hours!)
-     {
-       urls: [
-           "turn:global.turn.twilio.com:3478?transport=udp",
-           "turn:global.turn.twilio.com:3478?transport=tcp",
-           "turn:global.turn.twilio.com:443?transport=tcp" // Port 443 TCP
-           // If Twilio intended port 443 to be secure, change the last line to:
-           // "turns:global.turn.twilio.com:443?transport=tcp"
-       ],
-       // Username
-      username: "e8ab0798d025df3db4c4968448f1a6b34615e489fd9e08719fdd1e87fe252229",
-      // Credential
-      credential: "VdtEqugurbqlZQvQesKZWJ2TBlQoIyxGy2cHRuWlqvU=",
-     },
+    { urls: "stun:global.stun.twilio.com:3478" },
+    {
+      urls: [
+          "turn:global.turn.twilio.com:3478?transport=udp",
+          "turn:global.turn.twilio.com:3478?transport=tcp",
+          "turn:global.turn.twilio.com:443?transport=tcp"
+      ],
+      username: turnCredentials.username,
+      credential: turnCredentials.credential,
+    },
 ];
 
 /**

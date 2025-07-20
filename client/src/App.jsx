@@ -1,3 +1,5 @@
+// client/src/App.jsx
+
 import React, { useState, useEffect } from 'react';
 import logo from './assets/logo.png';
 import StreamRoom from './components/StreamRoom.jsx';
@@ -5,6 +7,8 @@ import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
 import TermsModal from './components/Legal/TermsModal.jsx';
 import PrivacyPolicyModal from './components/Legal/PrivacyPolicyModal.jsx';
+// Import the new component
+import ServerStatusTimer from './components/Session/ServerStatusTimer.jsx';
 
 function App() {
   const { socket, isConnected } = useSocket();
@@ -77,15 +81,18 @@ function App() {
           className="h-24 sm:h-28 md:h-32 mx-auto mb-2 transition-all"
         />
         <p className="text-sm text-gray-400">Real-time, Real fast. Fully private.</p>
-        <p className="text-xs text-gray-500 mt-1 break-all">
-          Status:{' '}
-          {isConnected ? (
-            <span className="text-green-400">Connected</span>
-          ) : (
-            <span className="text-red-400">Disconnected</span>
-          )}
-          {isConnected && socket && ` (ID: ${socket.id})`}
-        </p>
+        <div className="mt-1"> {/* Added a div for better layout */}
+          <p className="text-xs text-gray-500 break-all">
+            Status:{' '}
+            {isConnected ? (
+              <span className="text-green-400">Connected</span>
+            ) : (
+              <span className="text-red-400">Disconnected</span>
+            )}
+            {isConnected && socket && ` (ID: ${socket.id})`}
+          </p>
+          {!sessionId && <ServerStatusTimer />}
+        </div>
       </header>
 
       <main className="w-full">
