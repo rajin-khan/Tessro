@@ -21,7 +21,7 @@ function ServerStatusTimer() {
       const difference = expiryTime.getTime() - now.getTime();
 
       if (difference <= 0) {
-        setTimeLeft('Expired - Awaiting Refresh');
+        setTimeLeft('Server Expired - Awaiting Refresh');
         setTextColor('text-red-500');
         clearInterval(intervalId);
         return;
@@ -52,7 +52,7 @@ function ServerStatusTimer() {
   return (
     <div className={`text-xs mt-1 flex items-center justify-center gap-1.5 ${textColor}`}>
       <FaRegClock />
-      <span>Streaming Server Resets In: <strong>{timeLeft}</strong></span>
+      <span>Streaming Mode Available For: <strong>{timeLeft}</strong></span>
     </div>
   );
 }
