@@ -12,7 +12,7 @@ function PrivacyPolicyModal({ show, onClose }) {
             Tessro does not collect, store, or share any personal data. All activity happens peer-to-peer and is session-based. No video files are uploaded to any server.
           </p>
           <p>
-            Your nickname and messages are temporarily stored in-memory for the duration of the session and are not persisted after you leave.
+            Your nickname and messages are temporarily stored in your browser memory for the duration of the session and are cleared when you leave.
           </p>
           <p>
             By using Tessro, you acknowledge that the platform is designed for private, ephemeral video sessions with friends, and you are fully responsible for the content you stream.
