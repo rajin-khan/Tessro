@@ -66,7 +66,7 @@ function Landing({ mode, setMode, socket, isConnected }) {
                 What is Tessro?
               </h2>
               <p className="text-sm text-gray-300 leading-relaxed">
-                Tessro lets you <strong>watch videos with friends in perfect sync</strong>, or <strong>stream your content directly</strong> — all in real-time. <strong>No uploads. No accounts.</strong> Just vibes.
+                Tessro lets you <strong>watch videos with friends in perfect sync</strong>, or <strong>stream your content directly</strong> — all in real-time. <strong>No uploads. No accounts.</strong>
               </p>
         
               <ul className="mt-4 text-sm text-gray-400 list-disc list-inside space-y-2">
