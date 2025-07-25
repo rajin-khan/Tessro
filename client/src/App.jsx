@@ -1,5 +1,3 @@
-// client/src/App.jsx
-
 import React, { useState, useEffect } from 'react';
 import logo from './assets/logo.png';
 import StreamRoom from './components/StreamRoom.jsx';
@@ -7,12 +5,12 @@ import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
 import TermsModal from './components/Legal/TermsModal.jsx';
 import PrivacyPolicyModal from './components/Legal/PrivacyPolicyModal.jsx';
-// Import the new component
 import ServerStatusTimer from './components/Session/ServerStatusTimer.jsx';
 
 function App() {
   const { socket, isConnected } = useSocket();
   const [sessionId, setSessionId] = useState(null);
+  const [sessionPassword, setSessionPassword] = useState(''); // State to hold the password
   const [appError, setAppError] = useState(null);
   const [mode, setMode] = useState('create');
   const [participants, setParticipants] = useState([]);
@@ -21,6 +19,7 @@ function App() {
 
   const resetSessionState = () => {
     setSessionId(null);
+    setSessionPassword(''); // Reset password on leave
     setParticipants([]);
     setAppError(null);
   };
@@ -28,14 +27,9 @@ function App() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleSessionCreated = ({ sessionId: newSessionId, error }) => {
-      if (error) {
-        setAppError(`Session creation failed: ${error}`);
-        setSessionId(null);
-      } else {
-        setSessionId(newSessionId);
-        setAppError(null);
-      }
+    const handleSessionCreated = ({ sessionId: newSessionId }) => {
+      setSessionId(newSessionId);
+      setAppError(null);
     };
 
     const handleSessionJoined = ({ sessionId: joinedSessionId }) => {
@@ -81,7 +75,7 @@ function App() {
           className="h-24 sm:h-28 md:h-32 mx-auto mb-2 transition-all"
         />
         <p className="text-sm text-gray-400">Real-time, Real fast. Fully private.</p>
-        <div className="mt-1"> {/* Added a div for better layout */}
+        <div className="mt-1">
           <p className="text-xs text-gray-500 break-all">
             Status:{' '}
             {isConnected ? (
@@ -108,17 +102,18 @@ function App() {
             setMode={setMode}
             socket={socket}
             isConnected={isConnected}
+            onSessionStart={(pwd) => setSessionPassword(pwd)} // Pass the setter function
           />
         ) : (
           <StreamRoom
             socket={socket}
             sessionId={sessionId}
+            sessionPassword={sessionPassword} // Pass the password down
             participants={participants}
             onLeave={resetSessionState}
           />
         )}
       </main>
-
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
         <p className="text-sm text-gray-400">
@@ -131,7 +126,7 @@ function App() {
           Each session is currently limited to 7 users (hit me up to change that).
         </p>
         <p className="text-xs text-gray-400 mt-1">
-          Developed by {' '}
+          Developed by{' '}
           <a
             href="https://rajinkhan.com"
             target="_blank"
@@ -157,10 +152,8 @@ function App() {
         </p>
       </footer>
 
-      {/* ✅ Modals */}
       <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
       <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
-
     </div>
   );
 }

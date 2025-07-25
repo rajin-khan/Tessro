@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function SessionInfo({ socket, sessionId, sessionMode, isHost }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    if (!sessionId) return;
-    navigator.clipboard.writeText(sessionId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+// Simplified to only handle mode display and toggle
+function SessionInfo({ socket, sessionMode, isHost }) {
 
   const handleModeToggle = () => {
     if (!socket || !isHost) return;
@@ -16,19 +9,17 @@ function SessionInfo({ socket, sessionId, sessionMode, isHost }) {
     socket.emit('session:set_mode', { mode: newMode });
   };
 
-  if (!sessionId) return null;
-
   const ToggleSwitch = ({ enabled, onChange }) => (
     <button
       type="button"
       onClick={onChange}
-      className={`${enabled ? 'bg-brand-accent' : 'bg-gray-600'} relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent focus:ring-offset-brand-dark-purple`}
+      className={`${enabled ? 'bg-brand-accent' : 'bg-gray-600'} relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none`}
       role="switch"
       aria-checked={enabled}
     >
       <span className="sr-only">Toggle Mode</span>
       <span
-        className={`${enabled ? 'translate-x-5' : 'translate-x-1'} inline-block w-3 h-3 transform bg-white rounded-full transition-transform duration-300 ease-in-out`}
+        className={`${enabled ? 'translate-x-5' : 'translate-x-1'} inline-block w-3 h-3 transform bg-white rounded-full transition-transform`}
       />
     </button>
   );
@@ -37,15 +28,6 @@ function SessionInfo({ socket, sessionId, sessionMode, isHost }) {
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      {/* Session ID */}
-      <div
-        onClick={handleCopy}
-        title="Click to copy Session ID"
-        className="cursor-pointer text-sm px-3 py-1 rounded-full border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-medium whitespace-nowrap"
-      >
-        ID: {copied ? '✅ Copied!' : sessionId}
-      </div>
-
       {/* Mode Display */}
       <div
         className="text-sm px-3 py-1 rounded-full border border-brand-tekhelet text-brand-tekhelet font-medium whitespace-nowrap"
@@ -54,15 +36,10 @@ function SessionInfo({ socket, sessionId, sessionMode, isHost }) {
         Mode: <span className="font-semibold capitalize">{modeDisplayText}</span>
       </div>
 
-      {/* Host Only: Toggle with inline warning */}
+      {/* Host Only: Toggle */}
       {isHost && (
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* ⚠️ Caution note inline */}
-          <span className="text-xs text-gray-400 italic">
-            Stick to one mode per session
-          </span>
-
-          {/* Toggle */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400 italic">Toggle:</span>
           <ToggleSwitch enabled={sessionMode === 'stream'} onChange={handleModeToggle} />
         </div>
       )}
