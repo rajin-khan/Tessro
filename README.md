@@ -6,7 +6,7 @@
 <p align="center"><strong>Real-time. Real fast. Fully private.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-v2.0.0 running-green" alt="Status Badge">
+  <img src="https://img.shields.io/badge/status-v2.1.0 running-green" alt="Status Badge">
   <img src="https://img.shields.io/badge/built_with-React-blue?logo=react" alt="React Badge">
   <img src="https://img.shields.io/badge/backend-Node.js-yellow?logo=node.js" alt="Node.js Badge">
   <img src="https://img.shields.io/badge/deployment-Railway-black?logo=railway" alt="Railway Badge">
@@ -17,13 +17,7 @@
 
 ---
 
-### **💻 V2 Live Now! →** [tessro.com](https://tessro.com/)
-
-
-
-https://github.com/user-attachments/assets/df068085-cc06-45f4-aebe-c4bfac24f215
-
-
+### **💻 V2.1 Live Now! →** [tessro.com](https://tessro.com/)
 
 ---
 
@@ -57,20 +51,19 @@ Tessro is ideal for:
 
 ---
 
-## ✅ Core Features (v2.0)
+## Core Features (v2.1)
 
-| Feature                          | Status | Notes                                                             |
-|----------------------------------|--------|--------------------------------------------------------------------|
-| 🔁 Sync Mode                     | ✅     | File-based synchronization with hash matching                     |
-| 📡 Stream Mode (WebRTC)          | ✅     | Host streams video to all guests via peer-to-peer                 |
-| 🔐 Secure Sessions               | ✅     | Password-protected, nickname-based login                          |
-| 💬 Live Chat                     | ✅     | Scrollable, with sender info and timestamps                       |
-| 👥 Participant List              | ✅     | Real-time with host/you indicators                                |
-| 🧠 Smart Cleanup                 | ✅     | Host leaving ends session, guests gracefully exit                 |
-| 🛡️ Private, Peer-to-Peer        | ✅     | WebRTC ensures direct connections — **no centralized relaying**  |
-| 📱 Mobile-Friendly               | ✅     | Drawer-based mobile layout with responsive design                 |
-
----
+| Feature                          | Notes                                                             |
+|----------------------------------|--------------------------------------------------------------------|
+| 🔁 Sync Mode                     | File-based synchronization with hash matching                     |
+| 📡 Stream Mode (WebRTC)          | Host streams video to all guests via peer-to-peer                 |
+| 🔐 Secure Sessions               | Password-protected, nickname-based login                          |
+| 💬 Live Chat                     | Scrollable, with sender info and timestamps                       |
+| 👥 Participant List              | Real-time with host/you indicators                                |
+| 🧠 Smart Cleanup                 | Host leaving ends session, guests gracefully exit                 |
+| 🛡️ Private, Peer-to-Peer         | WebRTC ensures direct connections — **no centralized relaying**   |
+| 📱 Mobile-Friendly               | Drawer-based mobile layout with responsive design                 |
+| 👨‍💻 Custom Video Player           | Fullscreen mode for guests, better playback and volume control (But can be buggy on mobile) |
 
 ---
 
@@ -91,27 +84,7 @@ Tessro:
 - Supports **end-to-end WebRTC streaming**
 - Has **no trackers, ads, or analytics**
 
-Coming soon: self-hosted TURN fallback for even better firewall/NAT support.
-
----
-
-## 🧱 Tech Stack
-
-### Frontend
-- ⚛️ **React** + **Vite**
-- 🎨 **Tailwind CSS**
-- 📺 **React Player**
-- ⚡ **Socket.IO Client**
-
-### Backend
-- 🖥 **Node.js + Express**
-- 📡 **Socket.IO** for sync/chat
-- 🚉 **Railway** deployment (soon migrating to scalable cloud)
-
-### WebRTC
-- 🔄 **Peer-to-Peer media streaming**
-- 🌍 STUN/TURN-ready with fallback handling
-- 🔐 Future TURN servers with full privacy (currently using free 24h servers on Twilio)
+Coming soon: self-hosted TURN fallback for even better firewall/NAT support (currently using free 24h servers on Twilio).
 
 ---
 
@@ -121,6 +94,7 @@ Coming soon: self-hosted TURN fallback for even better firewall/NAT support.
 |----------------------------------|-------------|
 | ✅ Real-time Sync Mode           | Completed   |
 | ✅ WebRTC Peer Streaming         | Completed   |
+| ✅ Custom Video Player           | Completed   |
 | ⏳ Voice Chat                    | In Progress |
 | ⏳ Emoji Reactions               | In Progress |
 | ⏳ Subtitle Syncing              | Planning    |
