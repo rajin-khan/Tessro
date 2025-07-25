@@ -82,7 +82,10 @@ function Landing({ mode, setMode, socket, isConnected }) {
                 </ul>
                 <li><strong>Use the built-in chat</strong> to talk and react live</li>
                 <li className="text-yellow-400">
-                  ⚠️ For best results, stick to one mode throughout your session
+                  ⚠️ For best results: stick to <strong>one mode</strong> throughout your session
+                </li>
+                <li className="text-red-400">
+                  ⏰ Let everyone join <strong>before</strong> you begin streaming
                 </li>
               </ul>
             </div>
