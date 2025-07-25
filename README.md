@@ -6,11 +6,9 @@
 <p align="center"><strong>Real-time. Real fast. Fully private.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-v2.1.0 running-green" alt="Status Badge">
-  <img src="https://img.shields.io/badge/built_with-React-blue?logo=react" alt="React Badge">
-  <img src="https://img.shields.io/badge/backend-Node.js-yellow?logo=node.js" alt="Node.js Badge">
-  <img src="https://img.shields.io/badge/deployment-Railway-black?logo=railway" alt="Railway Badge">
-  <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT License Badge">
+  <img src="https://img.shields.io/badge/Status-v2.1.0 Running-green" alt="Status Badge">
+  <img src="https://img.shields.io/badge/TURN Server-External-purple" alt="Turn Server External Badge">
+  <img src="https://img.shields.io/badge/License-GPL 3.0-lightgrey" alt="GPL 3.0 License Badge">
 </p>
 
 <div align="center">
