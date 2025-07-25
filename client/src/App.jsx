@@ -120,7 +120,7 @@ function App() {
           Tessro works best on a laptop or desktop computer. Streaming servers are reconfigured every 24 hours (I try my best 💀).
         </p>
         <p>
-          Data is NEVER STORED ANYWHERE. Anything passing through is always encrypted.
+          Data is NEVER stored anywhere. Anything passing through is always encrypted.
         </p>
         <p>
           Each session is currently limited to 7 users (hit me up to change that).
