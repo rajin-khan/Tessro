@@ -117,7 +117,7 @@ function App() {
 
       <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
         <p className="text-sm text-gray-400">
-          Tessro works best on a laptop or desktop computer. Streaming servers are reconfigured every 24 hours (I try my best 💀).
+          Tessro works best on a laptop or desktop computer. Streaming servers are now automatically maintained. (I learned how cron jobs work!🥳)
         </p>
         <p>
           Data is NEVER stored anywhere. Anything passing through is always encrypted.
