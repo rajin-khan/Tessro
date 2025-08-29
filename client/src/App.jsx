@@ -120,10 +120,19 @@ function App() {
           Tessro works best on a laptop or desktop computer. Streaming servers are now automatically maintained. (I learned how cron jobs work!🥳)
         </p>
         <p>
-          ⚠️ I will introduct more premium features, and move streaming to a paid option.
+          ⚠️ I will introduct more premium features, and move streaming to a paid option. ⚠️
         </p>
         <p>
-          If you use Tessro now, hit me up and I'll make sure you get a lifetime premium account.
+          If you use Tessro now,{' '}
+          <a
+            href="mailto:rajin.khan2001@gmail.com?subject=Early Tessro User Request for Premium Account"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-primary hover:underline"
+          >
+            hit me up
+          </a>
+            {' '} and I'll make sure you get a lifetime premium account.
         </p>
         <p className="text-xs text-gray-400 mt-1">
           Developed by{' '}
