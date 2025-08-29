@@ -120,10 +120,10 @@ function App() {
           Tessro works best on a laptop or desktop computer. Streaming servers are now automatically maintained. (I learned how cron jobs work!🥳)
         </p>
         <p>
-          Data is NEVER stored anywhere. Anything passing through is always encrypted.
+          ⚠️ I will introduct more premium features, and move streaming to a paid option.
         </p>
         <p>
-          Each session is currently limited to 7 users (hit me up to change that).
+          If you use Tessro now, hit me up and I'll make sure you get a lifetime premium account.
         </p>
         <p className="text-xs text-gray-400 mt-1">
           Developed by{' '}
