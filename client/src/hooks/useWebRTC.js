@@ -4,9 +4,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 
 export const turnCredentials = {
-  lastResetTimestamp: '2025-09-17 00:00', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
-  username: "f5e94a3a5cea3e64def9e73d92bbb172341b671e231386d274fbe2ff5bca1716", // <--- UPDATE THIS
-  credential: "5rq1R3MTMAXeY3jUbpOeomneEHqdE69CBbMukEVRPZM=", // <--- UPDATE THIS
+  lastResetTimestamp: '2025-09-18 00:00', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
+  username: "83dff51486b6bbc1b0c9b407d96d957065832cfd72453bd2f021beb67742d253", // <--- UPDATE THIS
+  credential: "SC98ty4DpZs1lqaRCBKfB1a6QolsGPl8gUOdLwqVDTM=", // <--- UPDATE THIS
 };
 
 const ICE_SERVERS = [
