@@ -4,8 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 
 export const turnCredentials = {
-  lastResetTimestamp: '2025-10-01 00:00', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
-  username: "51f474acd6505dbb2df9facbfe91c6c4b1391128ca9696047ae22762b818b788", // <--- UPDATE THIS
+  lastResetTimestamp: '2025-10-02 00:00', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
+  username: "9e97af0f95cc17869b6cb3dfcc81ffdd1734681b80d52a77e44e2caaa5b07fea", // <--- UPDATE THIS
   credential: "jNg0HbOE8xHINbzJ08pewmbBnQwEeNRlARhj4M8ywBY=", // <--- UPDATE THIS
 };
 
