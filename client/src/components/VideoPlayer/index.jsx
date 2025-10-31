@@ -3,7 +3,8 @@ import ReactPlayer from 'react-player';
 import useVideoSync from './useVideoSync';
 import useWebRTC from '../../hooks/useWebRTC';
 import { calculateFileHash } from '../../utils/fileHash.js';
-import PlayerControls from './PlayerControls'; // Make sure PlayerControls.jsx is in the same folder
+import PlayerControls from './PlayerControls';
+import logo from '../../assets/logo.png';
 
 function VideoPlayer({
   socket,
@@ -13,10 +14,14 @@ function VideoPlayer({
   participants,
   selfId
 }) {
+  // Get host nickname for display
+  const hostParticipant = participants.find(p => participants.indexOf(p) === 0);
+  const hostName = hostParticipant?.nickname || 'Host';
   const playerRef = useRef(null);
   const playerWrapperRef = useRef(null);
   const videoElementRef = useRef(null);
   const seekingRef = useRef(false);
+  const isUserControllingRef = useRef(false);
 
   // State for the player's UI and functionality
   const [playerState, setPlayerState] = useState({
@@ -39,6 +44,8 @@ function VideoPlayer({
   
   // State specifically for guests to handle browser autoplay policies
   const [isGuestMuted, setIsGuestMuted] = useState(true);
+  const [showControls, setShowControls] = useState(true);
+  const controlsTimeoutRef = useRef(null);
 
   // Custom Hooks
   const { remoteStream, startStreaming, stopStreaming, isStreamingActive, webRTCError } = useWebRTC({
@@ -54,12 +61,19 @@ function VideoPlayer({
 
   const handlePlayPause = useCallback(() => {
     if (syncLock.current) return;
-    const newIsPlaying = !playerState.isPlaying;
-    setPlayerState(prev => ({ ...prev, isPlaying: newIsPlaying }));
-    if (sessionMode === 'sync') {
-      emitSyncAction(newIsPlaying ? 'play' : 'pause', playerRef.current?.getCurrentTime());
-    }
-  }, [playerState.isPlaying, sessionMode, syncLock, emitSyncAction]);
+    isUserControllingRef.current = true;
+    setPlayerState(prev => {
+      const newIsPlaying = !prev.isPlaying;
+      if (sessionMode === 'sync') {
+        emitSyncAction(newIsPlaying ? 'play' : 'pause', playerRef.current?.getCurrentTime());
+      }
+      return { ...prev, isPlaying: newIsPlaying };
+    });
+    // Reset flag after a short delay to allow ReactPlayer to process the change
+    setTimeout(() => {
+      isUserControllingRef.current = false;
+    }, 100);
+  }, [sessionMode, syncLock, emitSyncAction]);
 
   const handleVolumeChange = (newVolume) => {
     setPlayerState(prev => ({ ...prev, volume: newVolume, isMuted: newVolume === 0 }));
@@ -91,11 +105,66 @@ function VideoPlayer({
     }
   };
 
+  const handleSkipForward = useCallback(() => {
+    if (syncLock.current) return;
+    setPlayerState(prev => {
+      const newTime = Math.min(prev.playedSeconds + 10, prev.duration || 0);
+      if (playerRef.current) {
+        playerRef.current.seekTo(newTime, 'seconds');
+      }
+      if (sessionMode === 'sync') {
+        emitSyncAction('seek', newTime);
+      }
+      return { ...prev, playedSeconds: newTime };
+    });
+  }, [sessionMode, syncLock, emitSyncAction]);
+
+  const handleSkipBackward = useCallback(() => {
+    if (syncLock.current) return;
+    setPlayerState(prev => {
+      const newTime = Math.max(prev.playedSeconds - 10, 0);
+      if (playerRef.current) {
+        playerRef.current.seekTo(newTime, 'seconds');
+      }
+      if (sessionMode === 'sync') {
+        emitSyncAction('seek', newTime);
+      }
+      return { ...prev, playedSeconds: newTime };
+    });
+  }, [sessionMode, syncLock, emitSyncAction]);
+
   const handleProgress = (state) => {
     if (!seekingRef.current) {
       setPlayerState(prev => ({ ...prev, playedSeconds: state.playedSeconds, loadedSeconds: state.loadedSeconds }));
     }
   };
+
+  // Auto-hide controls after 5 seconds of inactivity
+  const resetControlsTimer = useCallback(() => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    controlsTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    // Auto-hide controls after 5 seconds in all modes
+    resetControlsTimer();
+    
+    return () => {
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, [resetControlsTimer]);
+
+  // Reset timer on mouse movement or interaction
+  const handlePlayerInteraction = useCallback(() => {
+    resetControlsTimer();
+  }, [resetControlsTimer]);
   
   const handleDuration = (duration) => {
     setPlayerState(prev => ({ ...prev, duration }));
@@ -240,7 +309,7 @@ function VideoPlayer({
       )}
       {(errorMessage || webRTCError) && (<div className="w-full max-w-md my-2 text-center text-red-400 text-xs font-medium bg-red-900/30 border border-red-500/50 rounded p-2"><p>Error: {webRTCError || errorMessage}</p></div>)}
 
-      <div ref={playerWrapperRef} className={`relative w-full max-w-4xl ${showPlayerContainer ? 'aspect-video' : ''} rounded-2xl overflow-hidden border border-brand-primary/20 shadow-[0_0_20px_#6435AC33] bg-black flex items-center justify-center group`}>
+      <div ref={playerWrapperRef} className={`relative w-full max-w-5xl ${showPlayerContainer ? 'aspect-video' : ''} rounded-3xl overflow-hidden border-2 border-brand-primary/30 shadow-[0_0_40px_#6435AC44] bg-black flex items-center justify-center group`}>
         {showPlayerContainer ? (
           showReactPlayer ? (
             <>
@@ -249,36 +318,84 @@ function VideoPlayer({
                 url={videoSource}
                 width="100%"
                 height="100%"
-                // ** FIX: Force guest to play, but let host be controlled by state **
                 playing={sessionMode === 'stream' && !isHost ? true : playerState.isPlaying}
                 volume={playerState.volume}
-                // ** FIX: Use separate state for guest mute to allow unmuting **
                 muted={sessionMode === 'stream' && !isHost ? isGuestMuted : playerState.isMuted}
                 onReady={handlePlayerReady}
                 onError={handlePlayerError}
-                onPlay={() => setPlayerState(p => ({...p, isPlaying: true}))}
-                onPause={() => setPlayerState(p => ({...p, isPlaying: false}))}
+                onPlay={() => {
+                  // Only update state if not user-controlled to prevent conflicts
+                  if (!isUserControllingRef.current && !syncLock.current) {
+                    setPlayerState(p => ({...p, isPlaying: true}));
+                  }
+                }}
+                onPause={() => {
+                  // Only update state if not user-controlled to prevent conflicts
+                  if (!isUserControllingRef.current && !syncLock.current) {
+                    setPlayerState(p => ({...p, isPlaying: false}));
+                  }
+                }}
                 onProgress={handleProgress}
                 onDuration={handleDuration}
                 playsInline={true}
                 config={{ file: { attributes: { playsInline: true } } }}
-                style={{ borderRadius: '1rem' }}
+                style={{ borderRadius: '1.5rem' }}
                 controls={false}
               />
-              <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+              
+              {/* Stream mode guest overlay - fades with controls */}
+              {sessionMode === 'stream' && !isHost && (
+                <div className={`absolute top-4 left-4 z-20 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className="px-4 py-2.5 rounded-xl bg-black/70 border border-brand-primary/40 shadow-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-brand-primary rounded-full blur-md opacity-50 animate-pulse"></div>
+                        <div className="relative w-2.5 h-2.5 bg-green-400 rounded-full"></div>
+                      </div>
+                      <span className="text-sm font-medium text-white">
+                        Streaming from <span className="text-brand-primary font-semibold">{hostName}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tessro branding overlay - fades with controls */}
+              <div className={`absolute top-4 right-4 z-20 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="flex items-center px-3 py-2 rounded-lg bg-black/70 border border-brand-primary/40 shadow-xl">
+                  <img 
+                    src={logo} 
+                    alt="Tessro" 
+                    className="h-5 w-auto"
+                  />
+                </div>
+              </div>
+              
+              {/* Controls overlay - auto-hide after 5 seconds, show on mouse movement */}
+              <div 
+                className={`absolute inset-0 z-10 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}
+                onMouseMove={handlePlayerInteraction}
+                onMouseEnter={handlePlayerInteraction}
+                onClick={handlePlayerInteraction}
+              >
                 <PlayerControls
                   isPlaying={playerState.isPlaying}
                   onPlayPause={handlePlayPause}
                   volume={playerState.volume}
                   onVolumeChange={handleVolumeChange}
-                  isMuted={playerState.isMuted}
-                  onMuteToggle={handleMuteToggle}
+                  isMuted={sessionMode === 'stream' && !isHost ? isGuestMuted : playerState.isMuted}
+                  onMuteToggle={sessionMode === 'stream' && !isHost ? () => setIsGuestMuted(!isGuestMuted) : handleMuteToggle}
                   playedSeconds={playerState.playedSeconds}
                   loadedSeconds={playerState.loadedSeconds}
                   duration={playerState.duration}
                   onSeek={handleSeek}
-                  onSeekMouseDown={handleSeekMouseDown}
+                  onSeekMouseDown={(e) => {
+                    handleSeekMouseDown();
+                    handlePlayerInteraction();
+                  }}
                   onSeekMouseUp={handleSeekMouseUp}
+                  onSkipForward={handleSkipForward}
+                  onSkipBackward={handleSkipBackward}
                   isHost={isHost}
                   sessionMode={sessionMode}
                   isFullscreen={isFullscreen}
@@ -286,18 +403,33 @@ function VideoPlayer({
                 />
               </div>
             </>
-          ) : ( !webRTCError && sessionMode === 'stream' && !isHost ? (<p className="text-gray-400 text-lg p-4 text-center">Connecting stream...</p>) : (<div className="p-4 text-gray-500">Loading player...</div>) )
-        ) : ( <> {sessionMode === 'sync' && !localVideoURL && (<p className="text-gray-400 text-lg p-4 text-center">Please select a video file...</p>)} {sessionMode === 'stream' && isHost && !localVideoURL && (<p className="text-gray-400 text-lg p-4 text-center">Select a video file to start streaming.</p>)} </> )}
+          ) : ( 
+            !webRTCError && sessionMode === 'stream' && !isHost ? (
+              <div className="flex flex-col items-center gap-4 p-8">
+                <div className="w-16 h-16 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-300 text-lg font-medium">Connecting to stream...</p>
+              </div>
+            ) : (
+              <div className="p-4 text-gray-400">Loading player...</div>
+            )
+          )
+        ) : ( 
+          <>
+            {sessionMode === 'sync' && !localVideoURL && (
+              <div className="flex flex-col items-center gap-3 p-8">
+                <div className="text-4xl">🎬</div>
+                <p className="text-gray-300 text-lg font-medium">Please select a video file to sync</p>
+              </div>
+            )}
+            {sessionMode === 'stream' && isHost && !localVideoURL && (
+              <div className="flex flex-col items-center gap-3 p-8">
+                <div className="text-4xl">📡</div>
+                <p className="text-gray-300 text-lg font-medium">Select a video file to start streaming</p>
+              </div>
+            )}
+          </>
+        )}
       </div>
-
-      {sessionMode === 'stream' && !isHost && remoteStream && isGuestMuted && (
-        <button
-          onClick={() => setIsGuestMuted(false)}
-          className="mt-3 px-4 py-1.5 bg-brand-accent text-white rounded-full text-sm hover:bg-opacity-80 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-rich-black"
-        >
-          Click to Unmute Stream
-        </button>
-      )}
     </div>
   );
 }
