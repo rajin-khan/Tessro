@@ -82,7 +82,7 @@ Tessro:
 - Supports **end-to-end WebRTC streaming**
 - Has **no trackers, ads, or analytics**
 
-Coming soon: self-hosted TURN fallback for even better firewall/NAT support (currently using free 24h servers on Twilio).
+Using Cloudflare TURN service for reliable firewall/NAT traversal (1TB/month free tier).
 
 ---
 
@@ -96,7 +96,7 @@ Coming soon: self-hosted TURN fallback for even better firewall/NAT support (cur
 | ⏳ Voice Chat                    | In Progress |
 | ⏳ Emoji Reactions               | In Progress |
 | ⏳ Subtitle Syncing              | Planning    |
-| ⏳ Self-hosted TURN server       | Planning    |
+| ✅ Cloudflare TURN Integration   | Completed   |
 | ⏳ Native Mobile App             | Planning    |
 | ⏳ Offline LAN-only Mode         | Planning    |
 | ⏳ Persistent Accounts (Optional) | Not in Vision, but may integrate on request    |

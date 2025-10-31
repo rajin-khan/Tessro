@@ -2,30 +2,25 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-
-export const turnCredentials = {
-  lastResetTimestamp: '2025-11-01 00:00', // <--- UPDATE THIS (e.g., "2024-08-02 15:30")
-  username: "8b9592738a8cebdc8ae259edadc33c780052a2dc1cd9be2981be65a72ff52178", // <--- UPDATE THIS
-  credential: "XyjRHiPmhgiobJZ3JWmKnb2EtZzQsL4UYF56IOgXZz0=", // <--- UPDATE THIS
-};
-
-const ICE_SERVERS = [
-    { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" },
-    { urls: "stun:stun2.l.google.com:19302" },
-    { urls: "stun:stun3.l.google.com:19302" },
-    { urls: "stun:stun4.l.google.com:19302" },
-    { urls: "stun:global.stun.twilio.com:3478" },
-    {
-      urls: [
-          "turn:global.turn.twilio.com:3478?transport=udp",
-          "turn:global.turn.twilio.com:3478?transport=tcp",
-          "turn:global.turn.twilio.com:443?transport=tcp"
-      ],
-      username: turnCredentials.username,
-      credential: turnCredentials.credential,
-    },
-];
+// Fetch ICE servers from our own backend (which calls Cloudflare)
+async function fetchIceServers() {
+  try {
+    const response = await fetch('/api/turn-credentials');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ICE servers: ${response.statusText}`);
+    }
+    const data = await response.json();
+    console.log('[WebRTC] Successfully fetched Cloudflare TURN credentials');
+    return data.iceServers;
+  } catch (error) {
+    console.error('[WebRTC] Error fetching TURN credentials, falling back to public STUN:', error);
+    // Fallback to public STUN servers
+    return [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+    ];
+  }
+}
 
 /**
  * Custom Hook to manage WebRTC streaming logic.
@@ -61,6 +56,15 @@ function useWebRTC({
   const [remoteStream, setRemoteStream] = useState(null);
   const [isStreamingActive, setIsStreamingActive] = useState(false);
   const [webRTCError, setWebRTCError] = useState(null);
+  const [iceServers, setIceServers] = useState([]);
+
+  // Fetch ICE servers when the hook initializes
+  useEffect(() => {
+    fetchIceServers().then(servers => {
+      setIceServers(servers);
+      console.log('[WebRTC] ICE servers loaded:', servers.length, 'servers');
+    });
+  }, []);
 
   const clearError = () => setWebRTCError(null);
 
@@ -141,8 +145,15 @@ function useWebRTC({
     console.log(`[WebRTC] Creating peer connection for: ${peerId}`);
     clearError();
 
+    // Wait for ICE servers to be fetched
+    if (iceServers.length === 0) {
+        console.warn('[WebRTC] createPeerConnection called before ICE servers were fetched. Aborting.');
+        setWebRTCError('Waiting for server configuration...');
+        return null;
+    }
+
     try {
-      const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+      const pc = new RTCPeerConnection({ iceServers });
 
       // Handle incoming tracks (video/audio) from the peer
       pc.ontrack = (event) => {
@@ -243,7 +254,7 @@ function useWebRTC({
         return null;
     }
   // Include closePeerConnection as it's used within
-  }, [socket, isHost, closePeerConnection]);
+  }, [socket, isHost, closePeerConnection, iceServers]);
 
 
   // --- Host Functions ---

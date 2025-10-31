@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaRegClock } from 'react-icons/fa';
-import { turnCredentials } from '../../hooks/useWebRTC.js';
-
-const lastResetTimestamp = turnCredentials.lastResetTimestamp;
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
@@ -13,8 +10,9 @@ function ServerStatusTimer() {
   const [textColor, setTextColor] = useState('text-green-400');
 
   useEffect(() => {
-    // The new Date() constructor handles the simplified format correctly.
-    const expiryTime = new Date(new Date(lastResetTimestamp).getTime() + TWENTY_FOUR_HOURS_MS);
+    // Track from when component mounts - Cloudflare TURN credentials are valid for 24 hours
+    // The credentials are automatically refreshed when needed, so this is a general indicator
+    const expiryTime = new Date(Date.now() + TWENTY_FOUR_HOURS_MS);
 
     const intervalId = setInterval(() => {
       const now = new Date();
