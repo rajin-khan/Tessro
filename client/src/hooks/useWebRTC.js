@@ -9,19 +9,32 @@ export const turnCredentials = {
   credential: "XyjRHiPmhgiobJZ3JWmKnb2EtZzQsL4UYF56IOgXZz0=", // <--- UPDATE THIS
 };
 
+// Split TURN servers into separate entries for better compatibility
 const ICE_SERVERS = [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
-    { urls: "stun:stun2.l.google.com:19302" },
-    { urls: "stun:stun3.l.google.com:19302" },
-    { urls: "stun:stun4.l.google.com:19302" },
     { urls: "stun:global.stun.twilio.com:3478" },
+    // TURN UDP - fastest if available
     {
-      urls: [
-          "turn:global.turn.twilio.com:3478?transport=udp",
-          "turn:global.turn.twilio.com:3478?transport=tcp",
-          "turn:global.turn.twilio.com:443?transport=tcp"
-      ],
+      urls: "turn:global.turn.twilio.com:3478?transport=udp",
+      username: turnCredentials.username,
+      credential: turnCredentials.credential,
+    },
+    // TURN TCP - more reliable through firewalls
+    {
+      urls: "turn:global.turn.twilio.com:3478?transport=tcp",
+      username: turnCredentials.username,
+      credential: turnCredentials.credential,
+    },
+    // TURN TLS on 443 - best for restrictive networks
+    {
+      urls: "turn:global.turn.twilio.com:443?transport=tcp",
+      username: turnCredentials.username,
+      credential: turnCredentials.credential,
+    },
+    // TURNS (TURN over TLS) for maximum compatibility
+    {
+      urls: "turns:global.turn.twilio.com:443?transport=tcp",
       username: turnCredentials.username,
       credential: turnCredentials.credential,
     },
@@ -57,12 +70,32 @@ function useWebRTC({
   localStreamSourceElement,
 }) {
   const peerConnections = useRef(new Map());
+  const pendingCandidates = useRef(new Map()); // Queue for ICE candidates that arrive before remote description
   const localStreamRef = useRef(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [isStreamingActive, setIsStreamingActive] = useState(false);
   const [webRTCError, setWebRTCError] = useState(null);
 
   const clearError = () => setWebRTCError(null);
+  
+  // Helper to process queued ICE candidates after remote description is set
+  const processPendingCandidates = useCallback(async (peerId) => {
+    const pc = peerConnections.current.get(peerId);
+    const candidates = pendingCandidates.current.get(peerId) || [];
+    
+    if (pc && pc.remoteDescription && candidates.length > 0) {
+      console.log(`[WebRTC] Processing ${candidates.length} queued ICE candidates for ${peerId}`);
+      for (const candidate of candidates) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(candidate));
+          console.log(`[WebRTC] Added queued ICE candidate for ${peerId}`);
+        } catch (error) {
+          console.warn(`[WebRTC] Error adding queued candidate for ${peerId}:`, error);
+        }
+      }
+      pendingCandidates.current.delete(peerId);
+    }
+  }, []);
 
   // Close a specific peer connection
   const closePeerConnection = useCallback((peerId) => {
@@ -88,6 +121,7 @@ function useWebRTC({
 
       pc.close();
       peerConnections.current.delete(peerId);
+      pendingCandidates.current.delete(peerId); // Clean up any queued candidates
       console.log(`[WebRTC] Connection to ${peerId} closed and removed.`);
 
       // If guest, clear remote stream when the connection to the host closes
@@ -115,6 +149,7 @@ function useWebRTC({
     });
     // Ensure map is clear after attempting closes
     peerConnections.current.clear();
+    pendingCandidates.current.clear(); // Clear all pending candidates
      if (!isHost && remoteStream) {
         console.log("[WebRTC Guest] Clearing remote stream due to closeAllConnections.");
         setRemoteStream(null);
@@ -168,16 +203,21 @@ function useWebRTC({
       // Handle ICE candidate generation (network path finding)
       pc.onicecandidate = (event) => {
         if (event.candidate && socket) {
-          // console.log(`[WebRTC] Sending ICE candidate to ${peerId}`, event.candidate); // Log candidate details if needed
+          // Log candidate type for debugging - important to verify TURN is working
+          const candidateStr = event.candidate.candidate;
+          const candidateType = candidateStr.includes('relay') ? 'relay (TURN)' : 
+                                candidateStr.includes('srflx') ? 'srflx (STUN)' : 
+                                candidateStr.includes('host') ? 'host' : 'unknown';
+          console.log(`[WebRTC] Sending ICE candidate to ${peerId}: type=${candidateType}`);
+          
           socket.emit('webrtc:ice-candidate', {
             targetUserId: peerId,
             candidate: event.candidate, // Send the RTCIceCandidate object directly
           });
+        } else if (!event.candidate) {
+            // An event with a null candidate indicates ICE gathering is complete
+            console.log(`[WebRTC] ICE Gathering complete for ${peerId}. All candidates sent.`);
         }
-        // An event with a null candidate indicates ICE gathering is complete
-        // else if (!event.candidate) {
-        //     console.log(`[WebRTC] ICE Gathering complete for ${peerId}.`);
-        // }
       };
 
        // Enhanced ICE Connection State Logging
@@ -389,6 +429,10 @@ function useWebRTC({
       try {
         console.log(`[WebRTC Guest] Setting remote description for offer from ${fromUserId}...`);
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        
+        // Process any queued ICE candidates now that remote description is set
+        await processPendingCandidates(fromUserId);
+        
         console.log(`[WebRTC Guest] Creating answer for host ${fromUserId}...`);
         const answer = await pc.createAnswer();
         console.log(`[WebRTC Guest] Setting local description (answer) for host ${fromUserId}...`);
@@ -426,6 +470,9 @@ function useWebRTC({
         console.log(`[WebRTC Host] Setting remote description (answer) for ${fromUserId}...`);
         await pc.setRemoteDescription(new RTCSessionDescription(answer));
         console.log(`[WebRTC Host] Remote description set for ${fromUserId} successfully.`);
+        
+        // Process any queued ICE candidates now that remote description is set
+        await processPendingCandidates(fromUserId);
       } catch (error) {
         console.error(`[WebRTC Host] Error setting remote description for ${fromUserId}:`, error);
         setWebRTCError(`Failed to establish connection with guest ${fromUserId} (answer).`);
@@ -436,18 +483,27 @@ function useWebRTC({
     const handleIceCandidate = async ({ fromUserId, candidate }) => {
        const pc = peerConnections.current.get(fromUserId);
        if (!pc) {
-           // console.warn(`[WebRTC] No peer connection found for ICE candidate from ${fromUserId}`);
+           console.warn(`[WebRTC] No peer connection found for ICE candidate from ${fromUserId}, queuing...`);
+           // Queue the candidate even if PC doesn't exist yet (race condition)
+           if (!pendingCandidates.current.has(fromUserId)) {
+             pendingCandidates.current.set(fromUserId, []);
+           }
+           pendingCandidates.current.get(fromUserId).push(candidate);
            return;
        }
        if (pc.signalingState === 'closed') {
             console.warn(`[WebRTC] Cannot add ICE candidate for ${fromUserId}, connection is closed.`);
             return;
        }
-       // Don't add candidate if remote description is not yet set
+       
+       // Queue candidate if remote description is not yet set
        if (!pc.remoteDescription) {
-            console.warn(`[WebRTC] Received ICE candidate from ${fromUserId} before remote description was set. Candidate might be queued internally or dropped.`);
-            // You could implement a queue here if needed, but often browsers handle this.
-            // return;
+            console.log(`[WebRTC] Queuing ICE candidate from ${fromUserId} (remote description not set yet)`);
+            if (!pendingCandidates.current.has(fromUserId)) {
+              pendingCandidates.current.set(fromUserId, []);
+            }
+            pendingCandidates.current.get(fromUserId).push(candidate);
+            return;
        }
 
        try {
@@ -455,15 +511,20 @@ function useWebRTC({
                ? candidate
                : new RTCIceCandidate(candidate);
 
-           // console.log(`[WebRTC] Adding ICE candidate from ${fromUserId}:`, iceCandidate.candidate.substring(0, 50) + '...'); // Log candidate start
-            await pc.addIceCandidate(iceCandidate);
-           // console.log(`[WebRTC] Added ICE candidate from ${fromUserId} successfully.`);
+           // Log candidate type for debugging
+           const candidateType = iceCandidate.candidate?.includes('relay') ? 'relay (TURN)' : 
+                                  iceCandidate.candidate?.includes('srflx') ? 'srflx (STUN)' : 
+                                  iceCandidate.candidate?.includes('host') ? 'host' : 'unknown';
+           console.log(`[WebRTC] Adding ICE candidate from ${fromUserId}: type=${candidateType}`);
+           
+           await pc.addIceCandidate(iceCandidate);
+           console.log(`[WebRTC] Added ICE candidate from ${fromUserId} successfully.`);
        } catch (error) {
             // Ignore benign errors like adding candidate during incorrect signaling state if remote desc isn't set
             if (!error.message.includes("InvalidStateError") && !error.message.includes("expected state is 'stable' or 'pranswer'")) {
                 console.warn(`[WebRTC] Error adding ICE candidate from ${fromUserId}:`, error);
             } else {
-               // console.log(`[WebRTC] Ignored benign error adding ICE candidate from ${fromUserId}: ${error.message}`);
+               console.log(`[WebRTC] Ignored benign error adding ICE candidate from ${fromUserId}: ${error.message}`);
             }
        }
     };
@@ -478,7 +539,7 @@ function useWebRTC({
       socket.off('webrtc:ice-candidate', handleIceCandidate);
     };
   // Ensure createPeerConnection/closePeerConnection are stable or included
-  }, [socket, sessionId, isHost, sessionMode, createPeerConnection, closePeerConnection]);
+  }, [socket, sessionId, isHost, sessionMode, createPeerConnection, closePeerConnection, processPendingCandidates]);
 
 
   // --- Handle Participant Changes (Host Only) ---
@@ -555,6 +616,7 @@ function useWebRTC({
       }
       closeAllConnections();
       stopLocalStream();
+      pendingCandidates.current.clear(); // Clear pending candidates on cleanup
       setRemoteStream(null);
       setIsStreamingActive(false);
     };
