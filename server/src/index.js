@@ -19,6 +19,18 @@ const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// For development, allow multiple localhost ports
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? clientURL 
+  : [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://127.0.0.1:5175',
+    ];
+
 // Add rate limiting to prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -38,7 +50,7 @@ const speedLimiter = slowDown({
 
 const io = new Server(httpServer, {
   cors: {
-    origin: clientURL,
+    origin: allowedOrigins,
     methods: ['GET', 'POST']
   }
 });
