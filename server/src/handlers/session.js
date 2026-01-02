@@ -355,5 +355,6 @@ export function registerSessionHandlers(io, socket, sessions, socketToSessionMap
       mode: session.mode
     });
   });
+  
 
 } // End of registerSessionHandlers

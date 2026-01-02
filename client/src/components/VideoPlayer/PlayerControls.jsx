@@ -1,6 +1,4 @@
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, FaCompress } from 'react-icons/fa';
-import { HiVolumeUp, HiVolumeOff } from 'react-icons/hi';
-import { MdReplay10, MdForward10 } from 'react-icons/md';
 
 // Helper function to format time from seconds into MM:SS or HH:MM:SS
 const formatTime = (seconds) => {
@@ -30,8 +28,6 @@ function PlayerControls({
   onSeek,
   onSeekMouseUp,
   onSeekMouseDown,
-  onSkipForward,
-  onSkipBackward,
   isHost,
   sessionMode,
   isFullscreen,
@@ -44,9 +40,10 @@ function PlayerControls({
   const loadedPercentage = duration > 0 ? (loadedSeconds / duration) * 100 : 0;
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 flex flex-col p-5 bg-gradient-to-t from-black/90 via-black/60 to-black/0">
-      {/* --- Modern Seek Bar --- */}
-      <div className="relative h-3 group mb-4">
+    <div className="absolute bottom-0 left-0 right-0 flex flex-col p-4 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+      {/* --- Seek Bar --- */}
+      <div className="relative h-2 group cursor-pointer mb-2">
+        {/* The actual input range is transparent but interactive */}
         <input
           type="range"
           min={0}
@@ -56,104 +53,58 @@ function PlayerControls({
           onMouseDown={onSeekMouseDown}
           onChange={(e) => onSeek(parseFloat(e.target.value) * duration)}
           onMouseUp={onSeekMouseUp}
-          className={`absolute w-full h-full appearance-none bg-transparent m-0 p-0 z-30 cursor-pointer ${!showMainControls ? 'cursor-not-allowed opacity-50' : ''}`}
+          className={`absolute w-full h-full appearance-none bg-transparent m-0 p-0 z-20 ${showMainControls ? 'cursor-pointer' : 'cursor-default'}`}
           disabled={!showMainControls}
         />
-        {/* Buffered progress track */}
-        <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 rounded-full overflow-hidden">
-          <div 
-            className="absolute h-full bg-white/20 rounded-full transition-all duration-300" 
-            style={{ width: `${loadedPercentage}%` }}
-          ></div>
+        {/* Visual representation of the seek bar */}
+        <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 bg-white/20 rounded-full group-hover:h-1.5 transition-all">
+          <div className="absolute h-full bg-white/40 rounded-full" style={{ width: `${loadedPercentage}%` }}></div>
+          <div className="absolute h-full bg-brand-primary rounded-full" style={{ width: `${playedPercentage}%` }}></div>
+          {showMainControls && (
+            <div 
+              className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-brand-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" 
+              style={{ left: `${playedPercentage}%` }}
+            ></div>
+          )}
         </div>
-        {/* Played progress track with gradient */}
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-brand-primary via-brand-tekhelet to-brand-primary rounded-full transition-all duration-200 shadow-[0_0_8px_rgba(100,53,172,0.6)]"
-          style={{ width: `${playedPercentage}%` }}
-        >
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-white rounded-full shadow-lg border-2 border-brand-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </div>
-        {/* Hover indicator */}
-        {showMainControls && (
-          <div 
-            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-xl border-2 border-brand-primary opacity-0 group-hover:opacity-100 transition-all scale-0 group-hover:scale-100" 
-            style={{ left: `${playedPercentage}%` }}
-          ></div>
-        )}
       </div>
 
       {/* --- Main Controls Row --- */}
       <div className="flex items-center justify-between">
-        {/* Left Side: Skip Backward, Play/Pause, Skip Forward, Volume */}
-        <div className="flex items-center gap-2">
+        {/* Left Side: Play/Pause, Volume */}
+        <div className="flex items-center gap-4">
           {showMainControls && (
-            <>
-              <button 
-                onClick={onSkipBackward}
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-110"
-                title="Rewind 10 seconds"
-              >
-                <MdReplay10 size={20} />
-              </button>
-              <button 
-                onClick={onPlayPause} 
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-primary/90 hover:bg-brand-primary text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200"
-                title={isPlaying ? 'Pause' : 'Play'}
-              >
-                {isPlaying ? <FaPause size={14} /> : <FaPlay size={14} className="ml-0.5" />}
-              </button>
-              <button 
-                onClick={onSkipForward}
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-110"
-                title="Forward 10 seconds"
-              >
-                <MdForward10 size={20} />
-              </button>
-            </>
+            <button onClick={onPlayPause} className="text-white hover:text-brand-primary transition-colors p-1">
+              {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
+            </button>
           )}
 
-          <div className="flex items-center gap-2 group/volume">
-            <button 
-              onClick={onMuteToggle} 
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-110"
-              title={isMuted || volume === 0 ? 'Unmute' : 'Mute'}
-            >
-              {isMuted || volume === 0 ? (
-                <HiVolumeOff size={16} />
-              ) : (
-                <HiVolumeUp size={16} />
-              )}
+          <div className="flex items-center gap-2 group">
+            <button onClick={onMuteToggle} className="text-white hover:text-brand-primary transition-colors p-1">
+              {isMuted || volume === 0 ? <FaVolumeMute size={22} /> : <FaVolumeUp size={22} />}
             </button>
-            <div className="w-0 group-hover/volume:w-20 overflow-hidden transition-all duration-300">
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={isMuted ? 0 : volume}
-                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-                className="w-full h-1.5 accent-brand-primary bg-white/10 rounded-full cursor-pointer"
-              />
-            </div>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step="any"
+              value={isMuted ? 0 : volume}
+              onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+              className="w-0 group-hover:w-24 transition-all duration-300 accent-brand-primary"
+            />
           </div>
         </div>
 
         {/* Right Side: Time, Fullscreen */}
         <div className="flex items-center gap-4">
-          <div className="px-3 py-1.5 rounded-lg bg-black/30 border border-white/10">
-            <div className="text-white text-xs font-mono tracking-wider">
-              <span className="text-brand-primary">{formatTime(playedSeconds)}</span>
-              <span className="text-gray-500 mx-1">/</span>
-              <span className="text-gray-400">{formatTime(duration)}</span>
-            </div>
+          <div className="text-white text-sm font-mono tracking-wider">
+            <span>{formatTime(playedSeconds)}</span>
+            <span className="text-gray-400"> / </span>
+            <span>{formatTime(duration)}</span>
           </div>
 
-          <button 
-            onClick={onToggleFullscreen} 
-            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-110"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-          >
-            {isFullscreen ? <FaCompress size={14} /> : <FaExpand size={14} />}
+          <button onClick={onToggleFullscreen} className="text-white hover:text-brand-primary transition-colors p-1">
+            {isFullscreen ? <FaCompress size={20} /> : <FaExpand size={20} />}
           </button>
         </div>
       </div>

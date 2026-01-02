@@ -62,18 +62,13 @@ function JoinSession({ socket, isConnected, onSessionStart }) {
         onChange={(e) => setPassword(e.target.value)}
         className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-primary/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
       />
-      <div className="w-full">
-        <input
-          type="text"
-          placeholder="Your Nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-tekhelet/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-tekhelet transition"
-        />
-        <p className="text-xs text-gray-500 mt-1 px-1">
-          Leave blank for a random auto-generated name
-        </p>
-      </div>
+      <input
+        type="text"
+        placeholder="Your Nickname"
+        value={nickname}
+        onChange={(e) => setNickname(e.target.value)}
+        className="w-full px-4 py-2 rounded-lg bg-brand-rich-black border border-brand-tekhelet/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-tekhelet transition"
+      />
       {error && (
         <p className="text-xs text-red-400 text-center">{error}</p>
       )}

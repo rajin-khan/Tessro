@@ -6,7 +6,6 @@ import { useSocket } from './hooks/useSocket';
 import TermsModal from './components/Legal/TermsModal.jsx';
 import PrivacyPolicyModal from './components/Legal/PrivacyPolicyModal.jsx';
 import ServerStatusTimer from './components/Session/ServerStatusTimer.jsx';
-import AutoJoinModal from './components/Session/AutoJoinModal.jsx';
 
 function App() {
   const { socket, isConnected } = useSocket();
@@ -17,27 +16,13 @@ function App() {
   const [participants, setParticipants] = useState([]);
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
-  const [autoJoinParams, setAutoJoinParams] = useState(null);
 
   const resetSessionState = () => {
     setSessionId(null);
     setSessionPassword(''); // Reset password on leave
     setParticipants([]);
     setAppError(null);
-    // Clear auto-join params if any
-    setAutoJoinParams(null);
   };
-
-  // Check for auto-join URL parameters on mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const joinSessionId = urlParams.get('join');
-    const joinPassword = urlParams.get('pass');
-    
-    if (joinSessionId && joinPassword && !sessionId) {
-      setAutoJoinParams({ sessionId: joinSessionId, password: joinPassword });
-    }
-  }, [sessionId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -178,33 +163,6 @@ function App() {
 
       <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
       <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
-      
-      {/* Auto-join modal for shareable links */}
-      {autoJoinParams && !sessionId && (
-        <AutoJoinModal
-          sessionId={autoJoinParams.sessionId}
-          password={autoJoinParams.password}
-          socket={socket}
-          isConnected={isConnected}
-          onJoin={(pwd) => {
-            setSessionPassword(pwd);
-            setAutoJoinParams(null);
-            // Clear URL params after joining
-            const url = new URL(window.location);
-            url.searchParams.delete('join');
-            url.searchParams.delete('pass');
-            window.history.replaceState({}, '', url);
-          }}
-          onCancel={() => {
-            setAutoJoinParams(null);
-            // Clear URL params
-            const url = new URL(window.location);
-            url.searchParams.delete('join');
-            url.searchParams.delete('pass');
-            window.history.replaceState({}, '', url);
-          }}
-        />
-      )}
     </div>
   );
 }
