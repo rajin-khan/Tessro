@@ -2,29 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { FaUsers, FaShareAlt, FaCheckCircle, FaLink } from 'react-icons/fa';
 
 function Participants({ participants = [], hostId, selfId, sessionId, sessionPassword }) {
-  const [copied, setCopied] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
 
-  useEffect(() => {
-    if (copied) {
-      const timer = setTimeout(() => setCopied(false), 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [copied]);
+    useEffect(() => {
+        if (copied) {
+            const timer = setTimeout(() => setCopied(false), 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [copied]);
 
-  useEffect(() => {
-    if (linkCopied) {
-      const timer = setTimeout(() => setLinkCopied(false), 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [linkCopied]);
+    useEffect(() => {
+        if (linkCopied) {
+            const timer = setTimeout(() => setLinkCopied(false), 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [linkCopied]);
 
-  const handleCopyInvite = () => {
-    if (!sessionId || !sessionPassword) return;
+    const handleCopyInvite = () => {
+        if (!sessionId || !sessionPassword) return;
 
-    const shareableLink = `${window.location.origin}${window.location.pathname}?join=${encodeURIComponent(sessionId)}&pass=${encodeURIComponent(sessionPassword)}`;
+        const shareableLink = `${window.location.origin}${window.location.pathname}?join=${encodeURIComponent(sessionId)}&pass=${encodeURIComponent(sessionPassword)}`;
 
-    const inviteMessage = `
+        const inviteMessage = `
 🥳 Join the watch party on Tessro!
 ✨ Auto-join link: ${shareableLink}
 🔭 Session ID: ${sessionId}
@@ -33,87 +33,97 @@ function Participants({ participants = [], hostId, selfId, sessionId, sessionPas
 💡 Tip: Click the auto-join link above to join automatically. If the link is acting up, enter the ID and Password in Join mode.
     `.trim();
 
-    navigator.clipboard.writeText(inviteMessage);
-    setCopied(true);
-  };
+        navigator.clipboard.writeText(inviteMessage);
+        setCopied(true);
+    };
 
-  const handleCopyShareableLink = () => {
-    if (!sessionId || !sessionPassword) return;
+    const handleCopyShareableLink = () => {
+        if (!sessionId || !sessionPassword) return;
 
-    const shareableLink = `${window.location.origin}${window.location.pathname}?join=${encodeURIComponent(sessionId)}&pass=${encodeURIComponent(sessionPassword)}`;
-    navigator.clipboard.writeText(shareableLink);
-    setLinkCopied(true);
-  };
+        const shareableLink = `${window.location.origin}${window.location.pathname}?join=${encodeURIComponent(sessionId)}&pass=${encodeURIComponent(sessionPassword)}`;
+        navigator.clipboard.writeText(shareableLink);
+        setLinkCopied(true);
+    };
 
-  return (
-    <div className="bg-brand-rich-black/40 backdrop-blur-md border border-brand-tekhelet/30 rounded-2xl p-4 w-full shadow-inner font-barlow relative">
-      {/* --- Beautiful Toast Notifications --- */}
-      <div className={`absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xl transition-all duration-300 z-10 ${copied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-        <FaCheckCircle className="text-white" />
-        <span>Invite Info Copied!</span>
-      </div>
-      <div className={`absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xl transition-all duration-300 z-10 ${linkCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-        <FaCheckCircle className="text-white" />
-        <span>Shareable Link Copied!</span>
-      </div>
-      
-      {/* --- Header with Invite Buttons --- */}
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide flex items-center">
-          <FaUsers className="mr-2" />
-          <span>Participants</span>
-        </h3>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCopyShareableLink}
-            title="Copy Shareable Link"
-            className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-brand-tekhelet text-brand-tekhelet hover:bg-brand-tekhelet hover:text-white transition-all font-medium cursor-pointer"
-          >
-            <FaLink />
-            <span>Copy Link</span>
-          </button>
-          <button
-            onClick={handleCopyInvite}
-            title="Copy Invite Info"
-            className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-medium cursor-pointer"
-          >
-            <FaShareAlt />
-            <span>Invite</span>
-          </button>
-        </div>
-      </div>
+    return (
+        <div className="w-full h-full flex flex-col relative font-barlow min-h-0">
+            {/* --- Beautiful Toast Notifications --- */}
+            <div className={`absolute top-16 left-1/2 -translate-x-1/2 bg-[#111] border border-white/10 text-white text-xs font-medium px-4 py-2 rounded-full flex items-center gap-2 shadow-xl transition-all duration-300 z-50 pointer-events-none w-max ${copied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+                <FaCheckCircle className="text-brand-primary" />
+                <span>Copied!</span>
+            </div>
+            <div className={`absolute top-16 left-1/2 -translate-x-1/2 bg-[#111] border border-white/10 text-white text-xs font-medium px-4 py-2 rounded-full flex items-center gap-2 shadow-xl transition-all duration-300 z-50 pointer-events-none w-max ${linkCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+                <FaCheckCircle className="text-brand-primary" />
+                <span>Link Copied!</span>
+            </div>
 
-      {/* --- Participant List --- */}
-      <ul className="flex flex-col gap-3 text-sm">
-        {participants.map((user) => {
-          const isSelf = user.id === selfId;
-          const isHost = user.id === hostId;
-          const fallbackName = user.nickname || `Guest${user.id.slice(-4)}`;
-
-          return (
-            <li key={user.id} className="flex items-center justify-between text-white animate-fade-in flex-wrap gap-2">
-              <div className="flex items-center gap-3">
-                <img
-                  src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${user.id}`}
-                  alt={fallbackName}
-                  className="w-8 h-8 rounded-full shadow"
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{fallbackName}</span>
-                  {isHost && (
-                    <span className="text-[10px] text-yellow-400 font-semibold">Host 👑</span>
-                  )}
+            {/* Fixed Header */}
+            <div className="flex items-center justify-between p-6 pb-4 shrink-0">
+                <div className="flex items-center gap-3">
+                    <h3 className="text-[10px] font-bold text-brand-primary uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span>{participants.length} Online</span>
+                    </h3>
+                    {participants.length >= 7 && (
+                        <span className="text-[9px] font-bold text-red-400 bg-red-950/30 border border-red-500/20 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                            Full
+                        </span>
+                    )}
                 </div>
-              </div>
-              {isSelf && (
-                <span className="text-[10px] text-gray-400 italic">(You)</span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleCopyShareableLink}
+                        title="Copy Link"
+                        className="text-white/40 hover:text-white transition-colors p-1.5"
+                    >
+                        <FaLink size={12} />
+                    </button>
+                    <button
+                        onClick={handleCopyInvite}
+                        title="Invite"
+                        className="text-white/40 hover:text-white transition-colors p-1.5"
+                    >
+                        <FaShareAlt size={12} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Scrollable List */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar px-6 pb-6">
+                <ul className="flex flex-col gap-4">
+                    {participants.map((user) => {
+                        const isSelf = user.id === selfId;
+                        const isHost = user.id === hostId;
+                        const fallbackName = user.nickname || `Guest ${user.id.slice(0, 4)}`;
+
+                        return (
+                            <li key={user.id} className="flex items-center justify-between text-white animate-fade-in group">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="relative shrink-0">
+                                        <img
+                                            src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${user.id}`}
+                                            alt={fallbackName}
+                                            className="w-8 h-8 rounded-full bg-white/5 ring-1 ring-white/10 opacity-80 group-hover:opacity-100 transition-opacity"
+                                        />
+                                        {isHost && (
+                                            <div className="absolute -top-1 -right-1 text-[8px] bg-black text-yellow-500 rounded-full p-0.5 border border-black shadow-sm" title="Host">
+                                                👑
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className={`text-sm ${isSelf ? 'text-white font-medium' : 'text-gray-400 group-hover:text-gray-200'} transition-colors truncate`}>
+                                            {fallbackName} {isSelf && <span className="text-white/20 text-xs font-normal ml-1">(You)</span>}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0"></div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
+        </div>
+    );
 }
 
 export default Participants;

@@ -1,212 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import logo from './assets/logo.png';
 import StreamRoom from './components/StreamRoom.jsx';
 import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
 import TermsModal from './components/Legal/TermsModal.jsx';
 import PrivacyPolicyModal from './components/Legal/PrivacyPolicyModal.jsx';
-import ServerStatusTimer from './components/Session/ServerStatusTimer.jsx';
 import AutoJoinModal from './components/Session/AutoJoinModal.jsx';
+import PremiumModal from './components/Premium/PremiumModal.jsx';
 
 function App() {
-  const { socket, isConnected } = useSocket();
-  const [sessionId, setSessionId] = useState(null);
-  const [sessionPassword, setSessionPassword] = useState(''); // State to hold the password
-  const [appError, setAppError] = useState(null);
-  const [mode, setMode] = useState('create');
-  const [participants, setParticipants] = useState([]);
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const [autoJoinParams, setAutoJoinParams] = useState(null);
+    const { socket, isConnected } = useSocket();
+    const [sessionId, setSessionId] = useState(null);
+    const [sessionPassword, setSessionPassword] = useState('');
+    const [appError, setAppError] = useState(null);
+    const [mode, setMode] = useState('create');
+    const [participants, setParticipants] = useState([]);
+    const [showTerms, setShowTerms] = useState(false);
+    const [showPrivacy, setShowPrivacy] = useState(false);
+    const [showPremium, setShowPremium] = useState(false);
+    const [autoJoinParams, setAutoJoinParams] = useState(null);
 
-  const resetSessionState = () => {
-    setSessionId(null);
-    setSessionPassword(''); // Reset password on leave
-    setParticipants([]);
-    setAppError(null);
-    // Clear auto-join params if any
-    setAutoJoinParams(null);
-  };
-
-  // Check for auto-join URL parameters on mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const joinSessionId = urlParams.get('join');
-    const joinPassword = urlParams.get('pass');
-    
-    if (joinSessionId && joinPassword && !sessionId) {
-      setAutoJoinParams({ sessionId: joinSessionId, password: joinPassword });
-    }
-  }, [sessionId]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleSessionCreated = ({ sessionId: newSessionId }) => {
-      setSessionId(newSessionId);
-      setAppError(null);
+    const resetSessionState = () => {
+        setSessionId(null);
+        setSessionPassword('');
+        setParticipants([]);
+        setAppError(null);
+        setAutoJoinParams(null);
     };
 
-    const handleSessionJoined = ({ sessionId: joinedSessionId }) => {
-      setSessionId(joinedSessionId);
-      setAppError(null);
-    };
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const joinSessionId = urlParams.get('join');
+        const joinPassword = urlParams.get('pass');
 
-    const handleSessionError = ({ error }) => {
-      if (error?.includes('does not match the host')) return;
-      setAppError(error || 'Something went wrong while joining the session.');
-    };
+        if (joinSessionId && joinPassword && !sessionId) {
+            setAutoJoinParams({ sessionId: joinSessionId, password: joinPassword });
+        }
+    }, [sessionId]);
 
-    const handleHostDisconnected = ({ message }) => {
-      setAppError(message || 'The session host disconnected.');
-      resetSessionState();
-    };
+    useEffect(() => {
+        if (!socket) return;
 
-    const handleParticipantUpdate = ({ participants }) => {
-      setParticipants(participants);
-    };
+        const handleSessionCreated = ({ sessionId: newSessionId }) => {
+            setSessionId(newSessionId);
+            setAppError(null);
+        };
 
-    socket.on('session:created', handleSessionCreated);
-    socket.on('session:joined', handleSessionJoined);
-    socket.on('session:error', handleSessionError);
-    socket.on('session:host_disconnected', handleHostDisconnected);
-    socket.on('session:participants', handleParticipantUpdate);
+        const handleSessionJoined = ({ sessionId: joinedSessionId }) => {
+            setSessionId(joinedSessionId);
+            setAppError(null);
+        };
 
-    return () => {
-      socket.off('session:created', handleSessionCreated);
-      socket.off('session:joined', handleSessionJoined);
-      socket.off('session:error', handleSessionError);
-      socket.off('session:host_disconnected', handleHostDisconnected);
-      socket.off('session:participants', handleParticipantUpdate);
-    };
-  }, [socket]);
+        const handleSessionError = ({ error }) => {
+            if (error?.includes('does not match the host')) return;
+            // Suppress global error if AutoJoinModal is handling it
+            if (autoJoinParams) return;
+            setAppError(error || 'Something went wrong while joining the session.');
+        };
 
-  return (
-    <div className="min-h-screen bg-brand-bg text-white font-barlow flex flex-col items-center justify-center px-4">
-      <header className="text-center mb-6">
-        <img
-          src={logo}
-          alt="Tessro Logo"
-          className="h-24 sm:h-28 md:h-32 mx-auto mb-2 transition-all"
-        />
-        <p className="text-sm text-gray-400">Real-time, Real fast. Fully private.</p>
-        <div className="mt-1">
-          <p className="text-xs text-gray-500 break-all">
-            Status:{' '}
-            {isConnected ? (
-              <span className="text-green-400">Connected</span>
+        const handleHostDisconnected = ({ message }) => {
+            setAppError(message || 'The session host disconnected.');
+            resetSessionState();
+        };
+
+        const handleParticipantUpdate = ({ participants }) => {
+            setParticipants(participants);
+        };
+
+        socket.on('session:created', handleSessionCreated);
+        socket.on('session:joined', handleSessionJoined);
+        socket.on('session:error', handleSessionError);
+        socket.on('session:host_disconnected', handleHostDisconnected);
+        socket.on('session:participants', handleParticipantUpdate);
+
+        return () => {
+            socket.off('session:created', handleSessionCreated);
+            socket.off('session:joined', handleSessionJoined);
+            socket.off('session:error', handleSessionError);
+            socket.off('session:host_disconnected', handleHostDisconnected);
+            socket.off('session:participants', handleParticipantUpdate);
+        };
+    }, [socket, autoJoinParams]);
+
+    // Global Error Display (Toast style)
+    const ErrorToast = ({ message }) => (
+        message ? (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] animate-fade-in-up">
+                <div className="bg-red-500/10 backdrop-blur-md border border-red-500/50 text-red-100 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+                    <span>⚠️</span>
+                    <span className="text-sm font-medium">{message}</span>
+                    <button onClick={() => setAppError(null)} className="ml-2 opacity-50 hover:opacity-100">×</button>
+                </div>
+            </div>
+        ) : null
+    );
+
+    return (
+        <>
+            <ErrorToast message={appError} />
+
+            {sessionId ? (
+                <div className="min-h-screen bg-brand-bg text-white font-barlow flex flex-col items-center justify-center">
+                    <StreamRoom
+                        socket={socket}
+                        sessionId={sessionId}
+                        sessionPassword={sessionPassword}
+                        participants={participants}
+                        onLeave={resetSessionState}
+                    />
+                </div>
             ) : (
-              <span className="text-red-400">Disconnected</span>
+                <>
+                    <Landing
+                        mode={mode}
+                        setMode={setMode}
+                        socket={socket}
+                        isConnected={isConnected}
+                        onSessionStart={(pwd) => setSessionPassword(pwd)}
+                    />
+
+                    {/* Footer Links - Absolute position on Landing */}
+                    <footer className="fixed bottom-4 w-full text-center pointer-events-none z-50">
+                        <div className="pointer-events-auto inline-flex gap-6 text-xs text-white/40 uppercase tracking-widest font-medium bg-[#050505] px-8 py-3 rounded-full border border-white/10 shadow-lg font-barlow items-center">
+                            <span>Tessro &bull; 2026</span>
+                            <button onClick={() => setShowTerms(true)} className="hover:text-white transition-colors uppercase">Terms</button>
+                            <button onClick={() => setShowPrivacy(true)} className="hover:text-white transition-colors uppercase">Privacy</button>
+                            <button onClick={() => setShowPremium(true)} className="hover:text-white transition-colors text-brand-primary uppercase font-bold">Get Premium</button>
+                        </div>
+                    </footer>
+                </>
             )}
-            {isConnected && socket && ` (ID: ${socket.id})`}
-          </p>
-          {!sessionId && <ServerStatusTimer />}
-        </div>
-      </header>
 
-      <main className="w-full">
-        {appError && (
-          <div className="bg-red-800 border border-red-600 text-white p-3 rounded mb-4 text-center text-sm max-w-xl mx-auto">
-            {appError}
-          </div>
-        )}
+            <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
+            <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
+            <PremiumModal isOpen={showPremium} onClose={() => setShowPremium(false)} />
 
-        {!sessionId ? (
-          <Landing
-            mode={mode}
-            setMode={setMode}
-            socket={socket}
-            isConnected={isConnected}
-            onSessionStart={(pwd) => setSessionPassword(pwd)} // Pass the setter function
-          />
-        ) : (
-          <StreamRoom
-            socket={socket}
-            sessionId={sessionId}
-            sessionPassword={sessionPassword} // Pass the password down
-            participants={participants}
-            onLeave={resetSessionState}
-          />
-        )}
-      </main>
-
-      <footer className="mt-6 sm:mt-10 text-center text-gray-600 text-xs">
-        <p className="text-sm text-gray-400">
-          Tessro works best on a laptop or desktop computer. Streaming servers are now automatically maintained. (I learned how cron jobs work!🥳)
-        </p>
-        <p>
-          ⚠️ I will introduct more premium features, and move streaming to a paid option. ⚠️
-        </p>
-        <p>
-          If you use Tessro now,{' '}
-          <a
-            href="mailto:rajin.khan2001@gmail.com?subject=Early Tessro User Request for Premium Account"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-primary hover:underline"
-          >
-            hit me up
-          </a>
-            {' '} and I'll make sure you get a lifetime premium account.
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Developed by{' '}
-          <a
-            href="https://rajinkhan.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-primary hover:underline"
-          >
-            Rajin Khan
-          </a>
-          {' '} • {' '}
-          <button
-            onClick={() => setShowTerms(true)}
-            className="underline text-brand-primary hover:text-white"
-          >
-            Terms of Service
-          </button>{' '}
-          •{' '}
-          <button
-            onClick={() => setShowPrivacy(true)}
-            className="underline text-brand-primary hover:text-white"
-          >
-            Privacy Policy
-          </button>
-        </p>
-      </footer>
-
-      <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
-      <PrivacyPolicyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
-      
-      {/* Auto-join modal for shareable links */}
-      {autoJoinParams && !sessionId && (
-        <AutoJoinModal
-          sessionId={autoJoinParams.sessionId}
-          password={autoJoinParams.password}
-          socket={socket}
-          isConnected={isConnected}
-          onJoin={(pwd) => {
-            setSessionPassword(pwd);
-            setAutoJoinParams(null);
-            // Clear URL params after joining
-            const url = new URL(window.location);
-            url.searchParams.delete('join');
-            url.searchParams.delete('pass');
-            window.history.replaceState({}, '', url);
-          }}
-          onCancel={() => {
-            setAutoJoinParams(null);
-            // Clear URL params
-            const url = new URL(window.location);
-            url.searchParams.delete('join');
-            url.searchParams.delete('pass');
-            window.history.replaceState({}, '', url);
-          }}
-        />
-      )}
-    </div>
-  );
+            {autoJoinParams && !sessionId && (
+                <AutoJoinModal
+                    sessionId={autoJoinParams.sessionId}
+                    password={autoJoinParams.password}
+                    socket={socket}
+                    isConnected={isConnected}
+                    onJoin={(pwd) => {
+                        setSessionPassword(pwd);
+                        setAutoJoinParams(null);
+                        const url = new URL(window.location);
+                        url.searchParams.delete('join');
+                        url.searchParams.delete('pass');
+                        window.history.replaceState({}, '', url);
+                    }}
+                    onCancel={() => {
+                        setAutoJoinParams(null);
+                        const url = new URL(window.location);
+                        url.searchParams.delete('join');
+                        url.searchParams.delete('pass');
+                        window.history.replaceState({}, '', url);
+                    }}
+                />
+            )}
+        </>
+    );
 }
 
 export default App;

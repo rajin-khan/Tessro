@@ -1,88 +1,230 @@
-import React, { useState } from 'react';
+// client/src/components/Landing.jsx (Refactored Option 1)
+import React, { useState, useEffect, useRef } from 'react';
+import { FaCrown, FaCheck, FaUsers, FaRocket, FaStar, FaTimes } from 'react-icons/fa';
+import VideoPlayer from './VideoPlayer';
 import CreateSession from './Session/Create';
 import JoinSession from './Session/Join';
+import ServerStatusTimer from './Session/ServerStatusTimer';
+import logo from '../assets/logo.png';
 
-// Accept onSessionStart prop
-function Landing({ mode, setMode, socket, isConnected, onSessionStart }) {
-  const [showInfo, setShowInfo] = useState(false);
+// Helper for smooth height transitions
+const SmoothHeightWrapper = ({ children }) => {
+    const contentRef = useRef(null);
+    const [height, setHeight] = useState('auto');
 
-  return (
-    <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-brand-rich-black/40 backdrop-blur-md border border-brand-primary/30 rounded-3xl shadow-[0_0_30px_#6435AC55] space-y-6 transition-all font-barlow relative">
-      <div className="flex justify-center flex-wrap gap-3">
-        <button
-          onClick={() => setMode('create')}
-          className={`px-5 py-2 rounded-full font-medium text-sm tracking-wide transition-all max-w-[160px] ${
-            mode === 'create'
-              ? 'bg-brand-primary text-white shadow-md'
-              : 'bg-brand-tekhelet/30 text-gray-300 hover:bg-brand-tekhelet/50 hover:text-white'
-          }`}
+    useEffect(() => {
+        if (!contentRef.current) return;
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                setHeight(entry.contentRect.height);
+            }
+        });
+        resizeObserver.observe(contentRef.current);
+        return () => resizeObserver.disconnect();
+    }, [children]);
+
+    return (
+        <div
+            style={{ height }}
+            className="transition-[height] duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
         >
-          Create
-        </button>
-        <button
-          onClick={() => setMode('join')}
-          className={`px-5 py-2 rounded-full font-medium text-sm tracking-wide transition-all max-w-[160px] ${
-            mode === 'join'
-              ? 'bg-brand-primary text-white shadow-md'
-              : 'bg-brand-tekhelet/30 text-gray-300 hover:bg-brand-tekhelet/50 hover:text-white'
-          }`}
-        >
-          Join
-        </button>
-      </div>
-      <div className="w-full">
-        {mode === 'create' ? (
-          <CreateSession socket={socket} isConnected={isConnected} onSessionStart={onSessionStart} />
-        ) : (
-          <JoinSession socket={socket} isConnected={isConnected} onSessionStart={onSessionStart} />
-        )}
-      </div>
-      <button
-        onClick={() => setShowInfo(true)}
-        className="block mx-auto mt-4 text-sm px-4 py-2 border border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition-all"
-      >
-        What is Tessro?
-      </button>
-
-      {showInfo && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-brand-rich-black border border-brand-primary/30 p-6 sm:p-8 rounded-2xl max-w-lg sm:max-w-md w-full mx-auto shadow-xl animate-fade-scale-in font-barlow relative">
-            <button
-              onClick={() => setShowInfo(false)}
-              className="absolute top-2 right-3 text-gray-400 hover:text-white text-xl"
-            >
-              ×
-            </button>
-            <h2 className="text-2xl font-semibold text-white mb-3">
-              What is Tessro?
-            </h2>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Tessro lets you <strong>watch videos with friends in perfect sync</strong>, or <strong>stream your content directly</strong> — all in real-time. <strong>No uploads. No accounts.</strong>
-            </p>
-            <ul className="mt-4 text-sm text-gray-400 list-disc list-inside space-y-2">
-              <li><strong>Create or join a private session</strong> using a unique ID</li>
-              <li><strong>Choose between two modes:</strong></li>
-              <ul className="ml-4 space-y-1">
-                <li>
-                  🎬 <strong>Sync Mode</strong>: Everyone selects the same local file. Playback stays synced — pause, play, seek together.
-                </li>
-                <li>
-                  📡 <strong>Stream Mode</strong>: The host selects a file and streams it to everyone else in real-time. No need for others to have the same file.
-                </li>
-              </ul>
-              <li><strong>Use the built-in chat</strong> to talk and react live</li>
-              <li className="text-yellow-400">
-                ⚠️ For best results, stick to one mode throughout your session
-              </li>
-              <li className="text-red-400">
-                  ⏰ Let everyone join <strong>before</strong> you begin streaming
-              </li>
-            </ul>
-          </div>
+            <div ref={contentRef}>{children}</div>
         </div>
-      )}
-    </div>
-  );
-}
+    );
+};
 
-export default Landing;
+// --- EDIT THIS MESSAGE TO CHANGE THE DEVELOPER NOTE ---
+const DEVELOPER_MESSAGE = "Hope you guys enjoy the UI overhauls. I'm working on more features and improvements <3";
+// ----------------------------------------------------
+
+export default function Landing({ mode, setMode, socket, isConnected, onSessionStart }) {
+    const [showInfo, setShowInfo] = useState(false);
+
+    return (
+        <div className="min-h-screen bg-brand-bg w-full flex flex-col font-barlow overflow-hidden relative selection:bg-brand-primary selection:text-white">
+            {/* Background Visuals */}
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-primary/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-accent/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
+
+            {/* Header */}
+            <header className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50">
+                <div className="flex items-center gap-3">
+                    <img src={logo} alt="Tessro" className="h-8 md:h-10 opacity-90" />
+                    <div className="flex flex-col">
+                        <span className="text-white/50 text-[10px] tracking-[0.2em] font-light leading-none">V2.2</span>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                    <div className="text-[10px] font-mono text-white/40 flex items-center gap-2">
+                        {isConnected ? (
+                            <>
+                                <span className="text-emerald-500/80">● ONLINE</span>
+                                <span className="hidden md:inline text-white/10">|</span>
+                                <span className="hidden md:inline">ID: {socket?.id?.slice(0, 4)}...</span>
+                            </>
+                        ) : (
+                            <span className="text-red-500/80">● OFFLINE</span>
+                        )}
+                    </div>
+                    {/* Server Status Timer integrated into Header */}
+                    <div className="hidden md:block opacity-60 scale-90 origin-right">
+                        <ServerStatusTimer />
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 w-full max-w-6xl mx-auto mt-8 md:mt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 w-full items-center">
+
+                    {/* Left Column: Hero Text */}
+                    <div className="text-center lg:text-left space-y-5 max-w-2xl mx-auto lg:mx-0">
+                        <div>
+                            <span className="inline-block py-2 px-5 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm font-bold tracking-[0.25em] text-brand-primary uppercase mb-6 animate-fade-in-up shadow-lg shadow-brand-primary/10">
+                                Real time. Real fast.
+                            </span>
+                            <h1 className="text-6xl md:text-8xl font-medium text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40 leading-[0.9] tracking-tight">
+                                SYNC <br /> TOGETHER.
+                            </h1>
+                        </div>
+
+                        <p className="text-lg md:text-xl text-gray-400 font-light max-w-md mx-auto lg:mx-0 leading-relaxed">
+                            The best way to watch movies with friends. <br />
+                            <span className="text-brand-primary font-normal">No uploads. No accounts. Total privacy.</span>
+                        </p>
+
+                        {/* Mode Switcher - Pill Style */}
+                        {/* Mode Switcher - Sliding Pill Style */}
+                        <div className="relative inline-flex p-1 bg-[#0a0a0a] border border-white/10 rounded-full mt-6 shadow-inner overflow-hidden">
+                            {/* Sliding Background Pill */}
+                            <div
+                                className={`absolute top-1 bottom-1 left-1 w-28 rounded-full bg-gradient-to-r from-purple-100 via-white to-purple-100 bg-[length:200%_auto] animate-shine shadow-[0_0_20px_rgba(168,85,247,0.4)] transform transition-transform duration-300 cubic-bezier(0.34, 1.56, 0.64, 1) ${mode === 'create' ? 'translate-x-0' : 'translate-x-[112px]'}`}
+                            />
+
+                            {/* Buttons */}
+                            <button
+                                onClick={() => setMode('create')}
+                                className={`relative z-10 w-28 py-3 rounded-full text-sm tracking-widest font-medium transition-colors duration-300 shrink-0 ${mode === 'create' ? 'text-black font-bold' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                HOST
+                            </button>
+                            <button
+                                onClick={() => setMode('join')}
+                                className={`relative z-10 w-28 py-3 rounded-full text-sm tracking-widest font-medium transition-colors duration-300 shrink-0 ${mode === 'join' ? 'text-black font-bold' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                JOIN
+                            </button>
+                        </div>
+
+                        {/* Developer / Portfolio Link - Desktop */}
+                        <div className="hidden lg:block pt-8 text-left animate-fade-in delay-200 opacity-60 hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                <div className="h-px w-8 bg-white/10"></div>
+                                <p>
+                                    Crafted by <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-primary transition-colors border-b border-transparent hover:border-brand-primary pb-0.5">Rajin Khan</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Active Card */}
+                    <div className="relative w-full max-w-md mx-auto perspective-1000">
+                        <div className="absolute inset-0 bg-brand-primary/20 blur-[60px] rounded-full -z-10" />
+
+                        <div className="bg-[#080808]/95 border border-white/10 rounded-[2rem] shadow-2xl ring-1 ring-white/5 transition-all duration-500 hover:shadow-brand-primary/20 hover:scale-[1.01] overflow-hidden">
+                            <SmoothHeightWrapper>
+                                {mode === 'create' ? (
+                                    <div key="create" className="p-8 animate-fade-in-fast">
+                                        <h2 className="text-2xl text-white mb-6 font-light">Start a Session</h2>
+                                        <CreateSession socket={socket} isConnected={isConnected} onSessionStart={onSessionStart} />
+                                    </div>
+                                ) : (
+                                    <div key="join" className="p-8 animate-fade-in-fast">
+                                        <h2 className="text-2xl text-white mb-6 font-light">Join a Stream</h2>
+                                        <JoinSession socket={socket} isConnected={isConnected} onSessionStart={onSessionStart} />
+                                    </div>
+                                )}
+                            </SmoothHeightWrapper>
+                        </div>
+
+                        <div className="mt-6 flex justify-center gap-6">
+                            <button onClick={() => setShowInfo(true)} className="text-xs text-white/40 hover:text-white uppercase tracking-widest transition-colors font-medium">
+                                About
+                            </button>
+                            <span className="text-white/10 text-xs">•</span>
+                            <p className="text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine">End-to-End Encrypted</p>
+                        </div>
+
+                        {/* Developer / Portfolio Link - Mobile */}
+                        <div className="lg:hidden mt-8 text-center animate-fade-in delay-200">
+                            <p className="text-xs text-gray-500 mb-2">
+                                Crafted by <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-primary transition-colors border-b border-transparent hover:border-brand-primary pb-0.5">Rajin Khan</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* Info Modal */}
+            {showInfo && (
+                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowInfo(false)}>
+                    <div className="bg-[#0a0a0a] border border-white/10 p-8 md:p-12 rounded-[2rem] max-w-3xl w-full mx-auto shadow-2xl animate-fade-in-up relative overflow-hidden" onClick={e => e.stopPropagation()}>
+                        {/* Modal Visuals */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 blur-[80px] rounded-full pointer-events-none" />
+
+                        <button
+                            onClick={() => setShowInfo(false)}
+                            className="absolute top-6 right-6 text-white/30 hover:text-white text-2xl transition-colors"
+                        >
+                            &times;
+                        </button>
+
+                        <h2 className="text-4xl text-white font-medium mb-8">The Vision.</h2>
+
+                        <div className="grid md:grid-cols-2 gap-12 text-gray-400 font-light leading-relaxed">
+                            <div className="space-y-6">
+                                <p>
+                                    <span className="text-white font-normal block mb-2">Sync Mode</span>
+                                    Everyone picks the same local video file. Tessro syncs the playback commands. Perfect for high-quality movie nights where everyone has the file.
+                                </p>
+                                <p>
+                                    <span className="text-white font-normal block mb-2">Stream Mode</span>
+                                    The host streams their local file directly to guests via WebRTC. No need for guests to download anything. Just click and watch.
+                                </p>
+                            </div>
+                            <div className="space-y-6 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-12">
+                                <ul className="space-y-4 text-sm">
+                                    <li className="flex items-center gap-3">
+                                        <span className="text-brand-primary">✓</span> No user data stored
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <span className="text-brand-primary">✓</span> No uploads to servers
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <span className="text-brand-primary">✓</span> No accounts needed
+                                    </li>
+                                </ul>
+                                <div className="pt-6 mt-4 border-t border-white/5">
+                                    <p className="text-[10px] text-brand-primary uppercase tracking-widest mb-3 font-semibold">Developer Status</p>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 backdrop-blur-sm relative overflow-hidden group">
+                                        {/* Shine effect overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shine duration-1000 pointer-events-none"></div>
+
+                                        <p className="text-sm md:text-base font-medium leading-relaxed bg-gradient-to-r from-gray-200 via-white to-gray-200 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine italic">
+                                            {DEVELOPER_MESSAGE}
+                                        </p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white hover:text-brand-primary transition-colors text-sm font-medium">
+                                            Visit my Portfolio &rarr;
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

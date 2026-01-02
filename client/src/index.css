@@ -5,52 +5,105 @@
 
 /* Optional: Basic body styling */
 body {
-  @apply bg-dark-bg text-gray-200 antialiased;
-  font-family: 'Inter', sans-serif; /* Add a nice font later */
+    @apply bg-dark-bg text-gray-200 antialiased;
+    font-family: 'Inter', sans-serif;
+    /* Add a nice font later */
 }
 
 @keyframes slideInRight {
     0% {
-      transform: translateX(30%);
-      opacity: 0;
+        transform: translateX(30%);
+        opacity: 0;
     }
-    100% {
-      transform: translateX(0%);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideInLeft {
-    0% {
-      transform: translateX(-30%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0%);
-      opacity: 1;
-    }
-  }
-  
-  .animate-slide-in-right {
-    animation: slideInRight 0.3s ease-out;
-  }
-  
-  .animate-slide-in-left {
-    animation: slideInLeft 0.3s ease-out;
-  }
 
-  @keyframes fadeScaleIn {
-    0% {
-      opacity: 0;
-      transform: scale(0.95);
-    }
     100% {
-      opacity: 1;
-      transform: scale(1);
+        transform: translateX(0%);
+        opacity: 1;
     }
-  }
-  
-  .animate-fade-scale-in {
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-30%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes fadeScaleIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-scale-in {
     animation: fadeScaleIn 0.3s ease-out;
-  }
-  
+}
+
+@keyframes shine {
+    0% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: -200% center;
+    }
+}
+
+.animate-shine {
+    animation: shine 8s linear infinite;
+}
+
+/* Fade Up Utility */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Fade Utility */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-fast {
+    animation: fadeIn 0.25s ease-out forwards;
+}
