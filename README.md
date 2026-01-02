@@ -6,7 +6,7 @@
 <p align="center"><strong>Real-time. Real fast. Fully private.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-v2.1.0 Running-green" alt="Status Badge">
+  <img src="https://img.shields.io/badge/Status-v2.2.0 Running-green" alt="Status Badge">
   <img src="https://img.shields.io/badge/TURN Server-External-purple" alt="Turn Server External Badge">
   <img src="https://img.shields.io/badge/License-GPL 3.0-lightgrey" alt="GPL 3.0 License Badge">
 </p>
@@ -15,7 +15,7 @@
 
 ---
 
-### **💻 V2.1 Live Now! →** [tessro.com](https://tessro.com/)
+### **💻 V2.2 Live Now! →** [tessro.com](https://tessro.com/)
 
 ---
 
@@ -49,26 +49,28 @@ Tessro is ideal for:
 
 ---
 
-## Core Features (v2.1)
+## Core Features (v2.2)
 
 | Feature                          | Notes                                                             |
 |----------------------------------|--------------------------------------------------------------------|
 | 🔁 Sync Mode                     | File-based synchronization with hash matching                     |
 | 📡 Stream Mode (WebRTC)          | Host streams video to all guests via peer-to-peer                 |
 | 🔐 Secure Sessions               | Password-protected, nickname-based login                          |
+| 🔗 Shareable Links               | One-click invite links for easy session sharing                   |
+| 🎭 Auto-Naming                   | Unique names generated automatically if left blank                |
 | 💬 Live Chat                     | Scrollable, with sender info and timestamps                       |
 | 👥 Participant List              | Real-time with host/you indicators                                |
+| 🎬 Enhanced Player               | 10-second skip buttons, auto-hiding controls, polished UI         |
 | 🧠 Smart Cleanup                 | Host leaving ends session, guests gracefully exit                 |
 | 🛡️ Private, Peer-to-Peer         | WebRTC ensures direct connections — **no centralized relaying**   |
 | 📱 Mobile-Friendly               | Drawer-based mobile layout with responsive design                 |
-| 👨‍💻 Custom Video Player           | Fullscreen mode for guests, better playback and volume control (But can be buggy on mobile) |
 
 ---
 
 ## 🧐 How It Works
 
 1. 🔧 **Create Session** — As a host, generate a session and choose a file.
-2. 🔑 **Invite Others** — Friends join with your session ID and password.
+2. 🔗 **Share Link** — Copy the shareable link and send it to friends (or use session ID/password).
 3. 🌀 **Pick Your Mode** — Sync files or just let the host stream.
 4. ⏯️ **Watch Together** — Tessro handles syncing, controls, and chat!
 
@@ -93,6 +95,7 @@ Coming soon: self-hosted TURN fallback for even better firewall/NAT support (cur
 | ✅ Real-time Sync Mode           | Completed   |
 | ✅ WebRTC Peer Streaming         | Completed   |
 | ✅ Custom Video Player           | Completed   |
+| ✅ Shareable Links               | Completed   |
 | ⏳ Voice Chat                    | In Progress |
 | ⏳ Emoji Reactions               | In Progress |
 | ⏳ Subtitle Syncing              | Planning    |
