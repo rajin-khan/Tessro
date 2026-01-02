@@ -80,34 +80,37 @@ function StreamRoom({ socket, sessionId, sessionPassword, initialParticipants, o
     <>
       <div className="w-full max-w-7xl mx-auto bg-brand-rich-black border border-brand-tekhelet/30 rounded-3xl shadow-[0_0_40px_#482A82aa] overflow-hidden flex flex-col md:flex-row h-[85vh] font-barlow">
         <div className={`p-5 transition-all duration-200 ${showSidebar ? 'md:w-3/4' : 'w-full'} w-full flex flex-col overflow-y-auto`}>
-          <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-            <button
-              onClick={() => setShowLeaveModal(true)}
-              className="text-sm px-3 py-1 rounded-full border border-red-400 text-red-400 hover:bg-red-500 hover:text-white transition-all"
-            >
-              Leave Session
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="md:hidden">
+          <div className="flex flex-col gap-3 mb-4">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <button
+                onClick={() => setShowLeaveModal(true)}
+                className="text-sm px-3 py-1 rounded-full border border-red-400 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+              >
+                Leave Session
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="md:hidden">
+                  <button
+                    onClick={() => setMobileView((prev) => (prev === 'chat' ? 'participants' : 'chat'))}
+                    className="text-xs px-3 py-1 rounded-full border border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white transition-all"
+                  >
+                    {mobileView === 'chat' ? 'View Participants' : 'View Chat'}
+                  </button>
+                </div>
+                <SessionInfo
+                  socket={socket}
+                  sessionMode={sessionMode}
+                  isHost={isHost}
+                />
                 <button
-                  onClick={() => setMobileView((prev) => (prev === 'chat' ? 'participants' : 'chat'))}
-                  className="text-xs px-3 py-1 rounded-full border border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white transition-all"
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className="hidden md:block text-sm px-3 py-1 rounded-full border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-all"
                 >
-                  {mobileView === 'chat' ? 'View Participants' : 'View Chat'}
+                  {showSidebar ? 'Hide Chat' : 'Show Chat'}
                 </button>
               </div>
-              <SessionInfo
-                socket={socket}
-                sessionMode={sessionMode}
-                isHost={isHost}
-              />
-              <button
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="hidden md:block text-sm px-3 py-1 rounded-full border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white transition-all"
-              >
-                {showSidebar ? 'Hide Chat' : 'Show Chat'}
-              </button>
             </div>
+            
           </div>
           <VideoPlayer
             socket={socket}
