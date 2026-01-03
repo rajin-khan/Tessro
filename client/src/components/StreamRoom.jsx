@@ -94,7 +94,7 @@ function StreamRoom({ socket, sessionId, sessionPassword, initialParticipants, o
                 <div className="w-full max-w-[1600px] bg-[#030303] border border-white/10 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col lg:flex-row h-[92dvh] md:h-[90vh] overflow-hidden relative">
 
                     {/* Main Content Area (Video) */}
-                    <div className={`transition-all duration-300 ease-in-out ${showSidebar ? 'lg:w-[72%]' : 'w-full'} w-full flex flex-col relative bg-black ${isMobileMinimized ? 'flex-1 min-h-0' : 'h-[40%]'} lg:h-full`}>
+                    <div className={`transition-all duration-300 ease-in-out w-full lg:flex-1 lg:min-w-0 flex flex-col relative bg-black ${isMobileMinimized ? 'flex-1 min-h-0' : 'h-[40%]'} lg:h-full`}>
 
                         {/* Top Bar / Controls */}
                         <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-start pointer-events-none">
