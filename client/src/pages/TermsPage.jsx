@@ -1,0 +1,53 @@
+import React from 'react';
+import PageLayout from '../components/Layout/PageLayout';
+
+export default function TermsPage() {
+    return (
+        <PageLayout title="Terms of Service">
+            <div className="prose prose-invert prose-lg max-w-none text-gray-400 font-light leading-loose space-y-12">
+                <div>
+                    <p className="text-sm text-brand-primary font-bold uppercase tracking-widest mb-6">Last updated: January 2026</p>
+                    <p className="text-xl text-white/80 font-normal">
+                        Welcome to Tessro. By accessing or using our website and services, you agree to be bound by these Terms of Service and all applicable laws and regulations.
+                    </p>
+                </div>
+
+                <section>
+                    <h3 className="text-2xl text-white font-medium mb-6 flex items-center gap-3">
+                        <span className="text-brand-primary/50">01.</span> Use License
+                    </h3>
+                    <p>
+                        Permission is granted to temporarily view the materials (information or software) on Tessro's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.
+                    </p>
+                </section>
+
+                <section>
+                    <h3 className="text-2xl text-white font-medium mb-6 flex items-center gap-3">
+                        <span className="text-brand-primary/50">02.</span> User Responsibilities
+                    </h3>
+                    <p>
+                        You are responsible for your use of the service and for any content you provide, including compliance with applicable laws, rules, and regulations. You should only use content that you have the right to use. We maintain the right to terminate services for users found violating these terms.
+                    </p>
+                </section>
+
+                <section>
+                    <h3 className="text-2xl text-white font-medium mb-6 flex items-center gap-3">
+                        <span className="text-brand-primary/50">03.</span> Disclaimer
+                    </h3>
+                    <p>
+                        The materials on Tessro's website are provided on an 'as is' basis. Tessro makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.
+                    </p>
+                </section>
+
+                <section>
+                    <h3 className="text-2xl text-white font-medium mb-6 flex items-center gap-3">
+                        <span className="text-brand-primary/50">04.</span> Limitations
+                    </h3>
+                    <p>
+                        In no event shall Tessro or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Tessro's website.
+                    </p>
+                </section>
+            </div>
+        </PageLayout>
+    );
+}

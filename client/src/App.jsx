@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import StreamRoom from './components/StreamRoom.jsx';
 import Landing from './components/Landing.jsx';
 import { useSocket } from './hooks/useSocket';
@@ -7,7 +8,13 @@ import PrivacyPolicyModal from './components/Legal/PrivacyPolicyModal.jsx';
 import AutoJoinModal from './components/Session/AutoJoinModal.jsx';
 import PremiumModal from './components/Premium/PremiumModal.jsx';
 
-function App() {
+// Static Pages
+import PricingPage from './pages/PricingPage.jsx';
+import TermsPage from './pages/TermsPage.jsx';
+import PrivacyPage from './pages/PrivacyPage.jsx';
+import RefundPage from './pages/RefundPage.jsx';
+
+function MainApp() {
     const { socket, isConnected } = useSocket();
     const [sessionId, setSessionId] = useState(null);
     const [sessionPassword, setSessionPassword] = useState('');
@@ -158,6 +165,20 @@ function App() {
                 />
             )}
         </>
+    );
+}
+
+function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<MainApp />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/terms-and-conditions" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/refund" element={<RefundPage />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
