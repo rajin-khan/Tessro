@@ -124,7 +124,7 @@ function App() {
                             <span>Tessro &bull; 2026</span>
                             <button onClick={() => setShowTerms(true)} className="hover:text-white transition-colors uppercase">Terms</button>
                             <button onClick={() => setShowPrivacy(true)} className="hover:text-white transition-colors uppercase">Privacy</button>
-                            <button onClick={() => setShowPremium(true)} className="hover:text-white transition-colors text-brand-primary uppercase font-bold">Get Premium</button>
+                            <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="uppercase font-bold bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">About Rajin</a>
                         </div>
                     </footer>
                 </>

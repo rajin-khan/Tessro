@@ -78,7 +78,7 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                 <div className="flex items-center gap-3">
                     <img src={logo} alt="Tessro" className="h-8 md:h-10 opacity-90" />
                     <div className="flex flex-col">
-                        <span className="text-white/50 text-[10px] tracking-[0.2em] font-light leading-none">V2.2</span>
+                        <span className="text-white/50 text-[10px] tracking-[0.2em] font-light leading-none">V3.0</span>
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
@@ -143,15 +143,7 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                             </button>
                         </div>
 
-                        {/* Developer / Portfolio Link - Desktop */}
-                        <div className="hidden lg:block pt-8 text-left animate-fade-in delay-200 opacity-60 hover:opacity-100 transition-opacity">
-                            <div className="flex items-center gap-3 text-xs text-gray-500">
-                                <div className="h-px w-8 bg-white/10"></div>
-                                <p>
-                                    Crafted by <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-primary transition-colors border-b border-transparent hover:border-brand-primary pb-0.5">Rajin Khan</a>
-                                </p>
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Right Column: Active Card */}
@@ -175,18 +167,11 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                         </div>
 
                         <div className="mt-6 flex justify-center items-center gap-6">
-                            <button onClick={() => setShowInfo(true)} className="text-xs text-white/40 hover:text-white uppercase tracking-widest transition-colors font-medium">
+                            <button onClick={() => setShowInfo(true)} className="text-sm text-white/40 hover:text-white uppercase tracking-widest transition-colors font-bold">
                                 About
                             </button>
-                            <span className="text-white/10 text-xs md:inline-block hidden">•</span>
-                            <button onClick={() => setShowPremium(true)} className="hidden md:block text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">
-                                Premium
-                            </button>
-                        </div>
-
-                        {/* Mobile Link for Premium */}
-                        <div className="md:hidden mt-4 text-center">
-                            <button onClick={() => setShowPremium(true)} className="text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine">
+                            <span className="text-white/10 text-xs">•</span>
+                            <button onClick={() => setShowPremium(true)} className="text-sm uppercase tracking-widest font-bold bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">
                                 Get Premium
                             </button>
                         </div>
@@ -201,14 +186,7 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                 </div>
             </main>
 
-            {/* Footer - Desktop & Mobile */}
-            <footer className="fixed bottom-0 left-0 w-full p-4 z-40 flex justify-center md:justify-end gap-6 text-[10px] text-white/20 uppercase tracking-widest font-medium pointer-events-none md:pointer-events-auto">
-                <div className="pointer-events-auto flex gap-6 bg-black/50 md:bg-transparent backdrop-blur-md md:backdrop-blur-none px-4 py-2 rounded-full md:p-0">
-                    <button onClick={() => setShowTerms(true)} className="hover:text-white transition-colors">Terms</button>
-                    <button onClick={() => setShowPrivacy(true)} className="hover:text-white transition-colors">Privacy</button>
-                    <a href="mailto:contact@tessro.com" className="hover:text-white transition-colors">Contact</a>
-                </div>
-            </footer>
+
 
             {/* Info Modal */}
             {isAboutRendered && (
