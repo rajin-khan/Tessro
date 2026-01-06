@@ -16,7 +16,7 @@ export default function PageLayout({ children, title }) {
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none z-0"></div>
 
             {/* Header */}
-            <header className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 bg-[#050505]/95 border-b border-white/5 transition-all duration-300">
+            <header className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50">
                 <div onClick={() => navigate('/')} className="flex items-center gap-4 cursor-pointer group">
                     <img src={logo} alt="Tessro" className="h-8 md:h-10 opacity-90 group-hover:opacity-100 transition-opacity" />
                     <div className="w-px h-6 bg-white/10 hidden md:block"></div>
@@ -28,17 +28,17 @@ export default function PageLayout({ children, title }) {
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-36 pb-24 relative z-10 animate-fade-in-up">
+            <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-28 pb-16 relative z-10 animate-fade-in-up">
                 {title && (
-                    <div className="mb-16 text-center space-y-4">
-                        <h1 className="text-4xl md:text-7xl font-semibold text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter pb-2">
-                            {title}.
+                    <div className="mb-8 text-center space-y-3">
+                        <h1 className="text-3xl md:text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter pb-1">
+                            {title}
                         </h1>
-                        <div className="h-px w-24 bg-gradient-to-r from-transparent via-brand-primary to-transparent mx-auto opacity-50" />
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent via-brand-primary to-transparent mx-auto opacity-50" />
                     </div>
                 )}
 
-                <div className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 md:p-16 shadow-2xl relative overflow-hidden group">
+                <div className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl relative overflow-hidden group">
                     {/* Inner Glow */}
                     <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 

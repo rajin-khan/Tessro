@@ -47,6 +47,15 @@ export default function TermsPage() {
                         In no event shall Tessro or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Tessro's website.
                     </p>
                 </section>
+
+                <section>
+                    <h3 className="text-2xl text-white font-medium mb-6 flex items-center gap-3">
+                        <span className="text-brand-primary/50">05.</span> Proprietor
+                    </h3>
+                    <p>
+                        Tessro is owned and operated by <a href="https://rajinkhan.com/about" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-primary transition-colors border-b border-white/30 hover:border-brand-primary">Adib Ar Rahman Khan (also known as Rajin Khan)</a>.
+                    </p>
+                </section>
             </div>
         </PageLayout>
     );

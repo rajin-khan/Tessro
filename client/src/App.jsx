@@ -127,11 +127,13 @@ function MainApp() {
 
                     {/* Footer Links - Absolute position on Landing */}
                     <footer className="fixed bottom-4 w-full text-center pointer-events-none z-50">
-                        <div className="pointer-events-auto inline-flex gap-6 text-xs text-white/40 uppercase tracking-widest font-medium bg-[#050505] px-8 py-3 rounded-full border border-white/10 shadow-lg font-barlow items-center">
-                            <span>Tessro &bull; 2026</span>
-                            <button onClick={() => setShowTerms(true)} className="hover:text-white transition-colors uppercase">Terms</button>
-                            <button onClick={() => setShowPrivacy(true)} className="hover:text-white transition-colors uppercase">Privacy</button>
-                            <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="uppercase font-bold bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">About Rajin</a>
+                        <div className="pointer-events-auto inline-flex gap-4 md:gap-6 text-[10px] md:text-xs text-white/40 uppercase tracking-widest font-medium bg-[#050505] px-4 md:px-8 py-3 rounded-full border border-white/10 shadow-lg font-barlow items-center flex-wrap justify-center">
+                            <span className="font-medium bg-gradient-to-r from-purple-400/60 via-gray-400 to-purple-400/60 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine">Tessro &bull; 2026</span>
+                            <a href="/pricing" className="hover:text-white transition-colors">Pricing</a>
+                            <a href="/terms-and-conditions" className="hover:text-white transition-colors">Terms</a>
+                            <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
+                            <a href="/refund" className="hover:text-white transition-colors">Refund</a>
+                            <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="uppercase font-bold bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">Developer</a>
                         </div>
                     </footer>
                 </>

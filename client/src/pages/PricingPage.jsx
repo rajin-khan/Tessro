@@ -60,7 +60,7 @@ export default function PricingPage() {
     ];
 
     return (
-        <PageLayout title="Choose Your Tier">
+        <PageLayout title="Choose Your Tier.">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
                 {plans.map((plan) => (
                     <div
