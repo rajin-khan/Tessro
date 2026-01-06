@@ -1,17 +1,61 @@
-import React from 'react';
+// client/src/components/Legal/PrivacyPolicyModal.jsx
+import React, { useEffect, useState } from 'react';
+import { FaShieldAlt } from 'react-icons/fa';
 
 function PrivacyPolicyModal({ show, onClose }) {
-    if (!show) return null;
+    const [isRendered, setIsRendered] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (show) {
+            setIsRendered(true);
+            setTimeout(() => setIsVisible(true), 50);
+        } else {
+            setIsVisible(false);
+            const timer = setTimeout(() => setIsRendered(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [show]);
+
+    // Standardize escape key handling
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        if (show) {
+            document.addEventListener('keydown', handleEsc);
+        }
+
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [show, onClose]);
+
+    if (!isRendered) return null;
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in font-barlow">
-            <div className="bg-[#0a0a0a] border border-white/10 text-white p-8 rounded-3xl shadow-2xl w-full max-w-xl mx-auto animate-fade-in-up relative overflow-hidden">
-                {/* Ambient Purple Glow */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/20 blur-[60px] rounded-full pointer-events-none" />
+        <div
+            className={`fixed inset-0 z-50 bg-black/90 flex items-center justify-center font-barlow transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={onClose}
+        >
+            <div
+                className={`bg-[#0a0a0a] border border-white/10 text-white p-8 rounded-3xl shadow-2xl w-full max-w-xl mx-auto relative overflow-hidden transform transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1) ${isVisible ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0'}`}
+                onClick={e => e.stopPropagation()}
+            >
 
-                <h2 className="text-xl font-medium mb-6 text-brand-primary tracking-wide">Privacy Policy</h2>
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-6 right-6 text-white/30 hover:text-white text-2xl transition-all duration-300 transform hover:scale-110 hover:rotate-90 origin-center z-10"
+                >
+                    &times;
+                </button>
 
-                <div className="space-y-4 text-sm text-gray-400 font-light max-h-[65vh] overflow-y-auto pr-2 leading-relaxed">
+                <h2 className="text-xl font-medium mb-8 text-brand-primary tracking-wide flex items-center gap-3">
+                    <FaShieldAlt className="text-2xl opacity-80" />
+                    <span className="text-2xl">Privacy Policy</span>
+                </h2>
+
+                <div className="space-y-5 text-sm text-gray-400 font-light max-h-[65vh] overflow-y-auto pr-2 leading-relaxed custom-scrollbar">
                     <p>
                         Tessro does not collect, store, or share any personal data. All activity happens <span className="text-white font-normal">peer-to-peer</span> and is session-based. No video files are uploaded to any server.
                     </p>
@@ -29,7 +73,7 @@ function PrivacyPolicyModal({ show, onClose }) {
                 <div className="mt-8 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2.5 rounded-full bg-brand-primary/10 text-brand-primary border border-brand-primary/20 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-300 text-sm font-medium shadow-lg shadow-brand-primary/10"
+                        className="px-8 py-3 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition-colors duration-300 text-sm tracking-wide transform hover:scale-105 active:scale-95"
                     >
                         Close
                     </button>

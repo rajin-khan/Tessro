@@ -1,50 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { FaCheck, FaTimes, FaGem, FaInfinity, FaServer } from 'react-icons/fa';
+// client/src/components/Premium/PremiumModal.jsx
+import React, { useEffect, useState } from 'react';
+import { FaCheck, FaTimes, FaGem, FaInfinity, FaServer, FaMicrophone } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
+import premiumImg from '../../assets/promo/premium.png';
 
 export default function PremiumModal({ isOpen, onClose }) {
+    const [isRendered, setIsRendered] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
-            setIsVisible(true);
+            setIsRendered(true);
+            // Small delay to ensure browser paints initial state
+            setTimeout(() => setIsVisible(true), 50);
         } else {
-            const timer = setTimeout(() => setIsVisible(false), 300);
+            setIsVisible(false);
+            const timer = setTimeout(() => setIsRendered(false), 300);
             return () => clearTimeout(timer);
         }
     }, [isOpen]);
 
-    if (!isVisible && !isOpen) return null;
+    // Handling Escape key for accessibility
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEsc);
+        }
+
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
+    if (!isRendered) return null;
 
     return (
-        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-[#000000]/95 backdrop-blur-sm transition-opacity duration-300"
+                className="absolute inset-0 bg-[#000000]/90 backdrop-blur-sm transition-opacity duration-300"
                 onClick={onClose}
             ></div>
 
             {/* Modal Card - Landscape Layout */}
             <div
-                className={`relative w-full max-w-5xl bg-[#080808] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl transform transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) ${isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0'}`}
+                className={`relative w-full max-w-5xl bg-[#080808] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl transform transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) ${isVisible ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0'} max-h-[90vh] overflow-y-auto md:overflow-visible`}
                 onClick={e => e.stopPropagation()}
             >
                 {/* Background Ambient Effects */}
                 <div className="absolute top-[-50%] right-[-10%] w-[70%] h-[150%] bg-brand-primary/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none opacity-40" />
                 <div className="absolute bottom-[-50%] left-[-10%] w-[60%] h-[150%] bg-brand-yellow/5 blur-[100px] rounded-full mix-blend-screen pointer-events-none opacity-30" />
 
-                <div className="relative z-10 flex flex-col md:flex-row min-h-[500px] font-barlow">
+                <div className="relative z-10 flex flex-col md:flex-row md:min-h-[500px] font-barlow">
 
                     {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-6 right-6 text-white/30 hover:text-white transition-colors p-2 z-50"
+                        className="absolute top-4 right-4 md:top-6 md:right-6 text-white/30 hover:text-white transition-all duration-300 p-2 z-50 transform hover:scale-110 hover:rotate-90 origin-center"
                     >
                         <FaTimes size={16} />
                     </button>
 
                     {/* Left Side: Visuals & Hook */}
-                    <div className="md:w-5/12 p-8 md:p-12 flex flex-col justify-between relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5 bg-white/[0.02]">
+                    <div className="md:w-5/12 p-6 md:p-12 flex flex-col justify-between relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5 bg-white/[0.02]">
                         <div className="relative z-10">
                             <img src={logo} alt="Tessro Premium" className="h-8 md:h-10 w-auto opacity-90 mb-8" />
                             <h2 className="text-3xl md:text-5xl text-white font-medium tracking-tight mb-4 leading-[0.95] uppercase">
@@ -73,27 +92,41 @@ export default function PremiumModal({ isOpen, onClose }) {
                     </div>
 
                     {/* Right Side: Features & CTA */}
-                    <div className="md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                        <div className="space-y-6 mb-10">
+                    <div className="md:w-7/12 p-6 md:p-12 flex flex-col justify-center relative overflow-hidden">
+
+                        {/* Blurred Gold Background Asset - Increased blur to 40px */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40 mix-blend-screen scale-110 translate-x-8">
+                            <img src={premiumImg} alt="" className="w-full h-auto object-cover blur-[40px]" />
+                        </div>
+
+                        {/* Gradient Overlay for Text Readability */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/80 via-[#080808]/40 to-transparent pointer-events-none" />
+
+                        <div className="relative z-10 space-y-3 mb-8">
                             <FeatureRow
-                                icon={<FaInfinity className="text-brand-primary" />}
+                                icon={<FaInfinity />}
                                 title="Unlimited Participants"
                                 desc="Host massive watch parties without any room caps."
                             />
                             <FeatureRow
-                                icon={<FaServer className="text-indigo-400" />}
+                                icon={<FaServer />}
                                 title="Stream Mode Moves to Premium"
-                                desc="Broadcasting your local files (Stream Mode) will soon be a Premium feature. Enjoy high-bitrate, low-latency global nodes."
+                                desc="Broadcasting your local files will soon be a Premium feature. Enjoy high-bitrate global nodes."
                             />
                             <FeatureRow
-                                icon={<FaCheck className="text-emerald-400" />}
+                                icon={<FaMicrophone />}
+                                title="Voice Channels"
+                                desc="Crystal clear voice chat built right into the room. No external apps needed."
+                            />
+                            <FeatureRow
+                                icon={<FaCheck />}
                                 title="Zero Ads"
                                 desc="Pure, uninterrupted entertainment for you and your guests."
                             />
                         </div>
 
                         {/* CTA Section */}
-                        <div className="mt-auto">
+                        <div className="relative z-10 mt-auto">
                             <div className="relative group w-full">
                                 {/* Fixed glow - tighter and less spread */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[98%] h-[80%] bg-gradient-to-r from-brand-yellow/40 via-brand-primary/40 to-brand-yellow/40 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition duration-700"></div>
@@ -115,8 +148,8 @@ export default function PremiumModal({ isOpen, onClose }) {
 
 function FeatureRow({ icon, title, desc }) {
     return (
-        <div className="flex gap-5 text-left group">
-            <div className="shrink-0 mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-lg group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300">
+        <div className="flex gap-5 text-left group p-4 rounded-xl hover:bg-white/5 transition-colors duration-300">
+            <div className="shrink-0 mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-lg text-white/80 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/10 group-hover:text-white">
                 {icon}
             </div>
             <div>

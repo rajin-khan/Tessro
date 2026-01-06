@@ -1,11 +1,20 @@
 // client/src/components/Landing.jsx (Refactored Option 1)
 import React, { useState, useEffect, useRef } from 'react';
-import { FaCrown, FaCheck, FaUsers, FaRocket, FaStar, FaTimes } from 'react-icons/fa';
+import { FaTimes, FaRocket, FaUsers, FaShieldAlt } from 'react-icons/fa';
 import VideoPlayer from './VideoPlayer';
 import CreateSession from './Session/Create';
 import JoinSession from './Session/Join';
 import ServerStatusTimer from './Session/ServerStatusTimer';
 import logo from '../assets/logo.png';
+import visionImg from '../assets/promo/vision.png';
+import syncImg from '../assets/promo/sync.png';
+import streamImg from '../assets/promo/stream.png';
+import privacyImg from '../assets/promo/privacy.png';
+
+// Modals
+import PremiumModal from './Premium/PremiumModal';
+import TermsModal from './Legal/TermsModal';
+import PrivacyModal from './Legal/PrivacyPolicyModal'; // Corrected Import
 
 // Helper for smooth height transitions
 const SmoothHeightWrapper = ({ children }) => {
@@ -38,7 +47,25 @@ const DEVELOPER_MESSAGE = "Hope you guys enjoy the UI overhauls. I'm working on 
 // ----------------------------------------------------
 
 export default function Landing({ mode, setMode, socket, isConnected, onSessionStart }) {
+    // About Modal State Logic
     const [showInfo, setShowInfo] = useState(false);
+    const [isAboutRendered, setIsAboutRendered] = useState(false);
+    const [isAboutVisible, setIsAboutVisible] = useState(false);
+
+    useEffect(() => {
+        if (showInfo) {
+            setIsAboutRendered(true);
+            setTimeout(() => setIsAboutVisible(true), 50);
+        } else {
+            setIsAboutVisible(false);
+            const timer = setTimeout(() => setIsAboutRendered(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [showInfo]);
+
+    const [showPremium, setShowPremium] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
+    const [showPrivacy, setShowPrivacy] = useState(false);
 
     return (
         <div className="min-h-screen bg-brand-bg w-full flex flex-col font-barlow overflow-hidden relative selection:bg-brand-primary selection:text-white">
@@ -74,7 +101,7 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 w-full max-w-6xl mx-auto mt-8 md:mt-0">
+            <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 w-full max-w-6xl mx-auto mt-8 md:mt-0 mb-12 lg:mb-0">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 w-full items-center">
 
                     {/* Left Column: Hero Text */}
@@ -147,12 +174,21 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                             </SmoothHeightWrapper>
                         </div>
 
-                        <div className="mt-6 flex justify-center gap-6">
+                        <div className="mt-6 flex justify-center items-center gap-6">
                             <button onClick={() => setShowInfo(true)} className="text-xs text-white/40 hover:text-white uppercase tracking-widest transition-colors font-medium">
                                 About
                             </button>
-                            <span className="text-white/10 text-xs">•</span>
-                            <p className="text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine">End-to-End Encrypted</p>
+                            <span className="text-white/10 text-xs md:inline-block hidden">•</span>
+                            <button onClick={() => setShowPremium(true)} className="hidden md:block text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine hover:opacity-80 transition-opacity">
+                                Premium
+                            </button>
+                        </div>
+
+                        {/* Mobile Link for Premium */}
+                        <div className="md:hidden mt-4 text-center">
+                            <button onClick={() => setShowPremium(true)} className="text-xs uppercase tracking-widest font-medium bg-gradient-to-r from-brand-primary via-brand-yellow to-brand-primary bg-[length:200%_auto] text-transparent bg-clip-text animate-shine">
+                                Get Premium
+                            </button>
                         </div>
 
                         {/* Developer / Portfolio Link - Mobile */}
@@ -165,59 +201,82 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                 </div>
             </main>
 
+            {/* Footer - Desktop & Mobile */}
+            <footer className="fixed bottom-0 left-0 w-full p-4 z-40 flex justify-center md:justify-end gap-6 text-[10px] text-white/20 uppercase tracking-widest font-medium pointer-events-none md:pointer-events-auto">
+                <div className="pointer-events-auto flex gap-6 bg-black/50 md:bg-transparent backdrop-blur-md md:backdrop-blur-none px-4 py-2 rounded-full md:p-0">
+                    <button onClick={() => setShowTerms(true)} className="hover:text-white transition-colors">Terms</button>
+                    <button onClick={() => setShowPrivacy(true)} className="hover:text-white transition-colors">Privacy</button>
+                    <a href="mailto:contact@tessro.com" className="hover:text-white transition-colors">Contact</a>
+                </div>
+            </footer>
+
             {/* Info Modal */}
-            {showInfo && (
-                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowInfo(false)}>
-                    <div className="bg-[#0a0a0a] border border-white/10 p-8 md:p-12 rounded-[2rem] max-w-3xl w-full mx-auto shadow-2xl animate-fade-in-up relative overflow-hidden" onClick={e => e.stopPropagation()}>
-                        {/* Modal Visuals */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 blur-[80px] rounded-full pointer-events-none" />
+            {isAboutRendered && (
+                <div
+                    className={`fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 transition-opacity duration-300 ${isAboutVisible ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={() => setShowInfo(false)}
+                >
+                    <div
+                        className={`bg-[#0a0a0a] border border-white/10 p-0 rounded-[2rem] max-w-4xl w-full mx-auto shadow-[0_0_15px_rgba(255,255,255,0.05)] relative overflow-hidden flex flex-col md:flex-row max-h-[85vh] overflow-y-auto md:overflow-visible transform transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1) ${isAboutVisible ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0'}`}
+                        onClick={e => e.stopPropagation()}
+                    >
 
-                        <button
-                            onClick={() => setShowInfo(false)}
-                            className="absolute top-6 right-6 text-white/30 hover:text-white text-2xl transition-colors"
-                        >
-                            &times;
-                        </button>
+                        {/* Left Side: Visuals */}
+                        <div className="relative md:w-1/3 bg-black/50 overflow-hidden min-h-[200px] md:min-h-0 shrink-0">
+                            <div className="absolute inset-0 bg-brand-primary/20 blur-[60px] opacity-50" />
+                            <img src={visionImg} alt="Vision" className="absolute inset-0 w-full h-full object-cover opacity-90 mix-blend-screen hover:scale-105 transition-transform duration-700" />
+                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent md:hidden" />
+                        </div>
 
-                        <h2 className="text-4xl text-white font-medium mb-8">The Vision.</h2>
+                        {/* Right Side: Content */}
+                        <div className="p-6 md:p-12 md:w-2/3 relative flex flex-col">
+                            <button
+                                onClick={() => setShowInfo(false)}
+                                className="absolute top-4 right-4 md:top-6 md:right-6 text-white/30 hover:text-white text-2xl transition-all duration-300 transform hover:scale-110 hover:rotate-90 origin-center z-20"
+                            >
+                                &times;
+                            </button>
 
-                        <div className="grid md:grid-cols-2 gap-12 text-gray-400 font-light leading-relaxed">
-                            <div className="space-y-6">
-                                <p>
-                                    <span className="text-white font-normal block mb-2">Sync Mode</span>
-                                    Everyone picks the same local video file. Tessro syncs the playback commands. Perfect for high-quality movie nights where everyone has the file.
-                                </p>
-                                <p>
-                                    <span className="text-white font-normal block mb-2">Stream Mode</span>
-                                    The host streams their local file directly to guests via WebRTC. No need for guests to download anything. Just click and watch.
-                                </p>
+                            <h2 className="text-3xl md:text-5xl text-white font-medium mb-10 tracking-tight">The Vision.</h2>
+
+                            <div className="space-y-4 text-gray-400 font-light leading-relaxed mb-8">
+                                <InfoRow
+                                    icon={<FaRocket />}
+                                    title="Sync Mode"
+                                    desc="Everyone picks the same local file. The server keeps everyone perfectly synchronized."
+                                />
+                                <InfoRow
+                                    icon={<FaUsers />}
+                                    title="Stream Mode"
+                                    desc="The host streams their local file directly to guests via WebRTC. No downloads required."
+                                />
+                                <InfoRow
+                                    icon={<FaShieldAlt />}
+                                    title="Privacy First"
+                                    desc="Absolutely no user data is stored. No files specific to your session are uploaded. No accounts needed."
+                                />
                             </div>
-                            <div className="space-y-6 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-12">
-                                <ul className="space-y-4 text-sm">
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-brand-primary">✓</span> No user data stored
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-brand-primary">✓</span> No uploads to servers
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-brand-primary">✓</span> No accounts needed
-                                    </li>
-                                </ul>
-                                <div className="pt-6 mt-4 border-t border-white/5">
-                                    <p className="text-[10px] text-brand-primary uppercase tracking-widest mb-3 font-semibold">Developer Status</p>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 backdrop-blur-sm relative overflow-hidden group">
-                                        {/* Shine effect overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shine duration-1000 pointer-events-none"></div>
 
-                                        <p className="text-sm md:text-base font-medium leading-relaxed bg-gradient-to-r from-gray-200 via-white to-gray-200 bg-[length:200%_auto] text-transparent bg-clip-text animate-shine italic">
-                                            {DEVELOPER_MESSAGE}
+                            <div className="mt-auto pt-6 border-t border-white/5">
+                                <div className="relative group p-6 rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 hover:border-brand-primary/20 transition-all duration-500">
+                                    <div className="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+                                    <div className="relative z-10 flex flex-col gap-4">
+                                        <p className="text-sm text-gray-300 font-light leading-relaxed italic opacity-90">
+                                            "{DEVELOPER_MESSAGE}"
                                         </p>
-                                    </div>
-                                    <div className="mt-4">
-                                        <a href="https://rajinkhan.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white hover:text-brand-primary transition-colors text-sm font-medium">
-                                            Visit my Portfolio &rarr;
-                                        </a>
+
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-px w-6 bg-brand-primary/40" />
+                                            <a
+                                                href="https://www.rajinkhan.com/projects/tessro"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[10px] uppercase tracking-widest text-brand-primary hover:text-white transition-colors font-bold group-hover:translate-x-1 duration-300"
+                                            >
+                                                Read the full story
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -225,6 +284,25 @@ export default function Landing({ mode, setMode, socket, isConnected, onSessionS
                     </div>
                 </div>
             )}
+
+            {/* Premium, Terms, Privacy Modals */}
+            <PremiumModal isOpen={showPremium} onClose={() => setShowPremium(false)} />
+            <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
+            <PrivacyModal show={showPrivacy} onClose={() => setShowPrivacy(false)} />
+        </div>
+    );
+}
+
+function InfoRow({ icon, title, desc }) {
+    return (
+        <div className="flex gap-5 items-start p-4 rounded-2xl hover:bg-white/5 transition-colors duration-300 group">
+            <div className="shrink-0 w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-xl text-white/50 group-hover:text-brand-primary group-hover:bg-white/10 transition-all duration-300">
+                {icon}
+            </div>
+            <div>
+                <h3 className="text-white font-medium text-lg mb-1 group-hover:text-brand-primary transition-colors">{title}</h3>
+                <p className="text-sm leading-relaxed opacity-60 group-hover:opacity-90 transition-opacity">{desc}</p>
+            </div>
         </div>
     );
 }
