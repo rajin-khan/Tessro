@@ -1,8 +1,8 @@
 specs.md
 twilioturnservercurl.md
 context.md
-# monetization_plan.md
-# pre_monetization_plan.md
+monetization_plan.md
+pre_monetization_plan.md
 */.env
 # Ignore node_modules and build artifacts
 node_modules/
