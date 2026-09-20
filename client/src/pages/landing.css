@@ -130,15 +130,16 @@
 .ticket-flight-float { filter: drop-shadow(0 22px 18px #0007); }
 
 .is-playing .cartoon-player { opacity: 1; visibility: visible; }
-.cinema-logo, .cinema-close, .cartoon-caption, .cartoon-navigation, .cartoon-player > .absolute { transition: opacity 350ms; }
+.cinema-logo, .cinema-close, .cartoon-caption, .cartoon-navigation, .cartoon-chat-toggle, .cartoon-player > .absolute { transition: opacity 350ms, color 150ms, background 150ms, transform 150ms; }
 .ticket-cinema:not(.controls-visible) .cinema-logo,
 .ticket-cinema:not(.controls-visible) .cinema-close,
 .ticket-cinema:not(.controls-visible) .cartoon-caption,
 .ticket-cinema:not(.controls-visible) .cartoon-navigation,
+.ticket-cinema:not(.controls-visible) .cartoon-chat-toggle,
 .ticket-cinema:not(.controls-visible) .cartoon-player > .absolute { opacity: 0; pointer-events: none; }
 .is-playing.controls-visible .cinema-logo { opacity: 1; }
 .ticket-cinema :is(button, a, input):focus-visible { opacity: 1; }
-.ticket-cinema:not(.controls-visible):has(:focus-visible) :is(.cinema-close, .cartoon-navigation, .cartoon-caption, .cartoon-player > .absolute) { opacity: 1; pointer-events: auto; }
+.ticket-cinema:not(.controls-visible):has(:focus-visible) :is(.cinema-close, .cartoon-navigation, .cartoon-caption, .cartoon-chat-toggle, .cartoon-player > .absolute) { opacity: 1; pointer-events: auto; }
 .ticket-cinema:not(.is-playing) .cinema-close { opacity: 0; pointer-events: none; }
 
 .cartoon-status { left: 50%; width: auto; max-width: calc(100% - 2rem); transform: translateX(-50%); border-radius: 1rem; }
