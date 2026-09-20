@@ -9,10 +9,11 @@ import PricingPage from './pages/PricingPage.jsx';
 import TermsPage from './pages/TermsPage.jsx';
 import PrivacyPage from './pages/PrivacyPage.jsx';
 import RefundPage from './pages/RefundPage.jsx';
+import { capturePageview } from './analytics.js';
 
 export function AppRoutes() {
     const { pathname } = useLocation();
-    useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+    useEffect(() => { window.scrollTo(0, 0); capturePageview(pathname); }, [pathname]);
 
     return (
         <>

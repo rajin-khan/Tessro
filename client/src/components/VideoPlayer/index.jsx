@@ -6,6 +6,7 @@ import useWebRTC from '../../hooks/useWebRTC';
 import { calculateFileHash } from '../../utils/fileHash.js';
 import PlayerControls from './PlayerControls';
 import { bindGuestPlayback } from './guestPlayback.js';
+import { capture } from '../../analytics.js';
 
 function VideoPlayer({
     socket,
@@ -50,6 +51,14 @@ function VideoPlayer({
     const [isGuestMuted, setIsGuestMuted] = useState(true);
     const [showControls, setShowControls] = useState(true);
     const controlsTimeoutRef = useRef(null);
+    const lastPlaybackEventRef = useRef({ name: '', at: 0 });
+    const trackPlayback = (name) => {
+        if (!isPlayerReady) return;
+        const now = Date.now();
+        if (lastPlaybackEventRef.current.name === name && now - lastPlaybackEventRef.current.at < 30000) return;
+        lastPlaybackEventRef.current = { name, at: now };
+        capture(name, { mode: sessionMode, role: isHost ? 'host' : 'guest' });
+    };
 
     // Custom Hooks
     const { remoteStream, startStreaming, stopStreaming, isStreamingActive, webRTCError } = useWebRTC({
@@ -282,13 +291,14 @@ function VideoPlayer({
     }, [playerState.volume, isHost, remoteStream]);
 
     const handlePlayerError = useCallback((error, data) => {
+        capture('fliccs_playback_failed', { mode: sessionMode, role: isHost ? 'host' : 'guest', stage: 'player' });
         console.error("[VideoPlayer] ReactPlayer Error:", error, data);
         let specificError = error?.message || JSON.stringify(error);
         if (typeof error === 'object' && error !== null && 'type' in error) { specificError = `Type: ${error.type}`; }
         setErrorMessage(`Video playback error: ${specificError}`);
         setIsPlayerReady(false);
         if (isHost && isStreamingActive) { stopStreaming(); }
-    }, [isHost, isStreamingActive, stopStreaming]);
+    }, [isHost, isStreamingActive, sessionMode, stopStreaming]);
 
     const getStatusBadge = () => {
         if (sessionMode !== 'sync') return null;
@@ -470,11 +480,13 @@ function VideoPlayer({
                             onReady={handlePlayerReady}
                             onError={handlePlayerError}
                             onPlay={() => {
+                                trackPlayback('fliccs_playback_started');
                                 if (!isUserControllingRef.current && !syncLock.current) {
                                     setPlayerState(p => ({ ...p, isPlaying: true }));
                                 }
                             }}
                             onPause={() => {
+                                trackPlayback('fliccs_playback_paused');
                                 if (!isUserControllingRef.current && !syncLock.current) {
                                     setPlayerState(p => ({ ...p, isPlaying: false }));
                                 }

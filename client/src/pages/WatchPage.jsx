@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RoomEntry from '../components/RoomEntry.jsx';
 import { useSocket } from '../hooks/useSocket';
 import AutoJoinModal from '../components/Session/AutoJoinModal.jsx';
+import { capture } from '../analytics.js';
 
 const StreamRoom = lazy(() => import('../components/StreamRoom.jsx'));
 
@@ -39,6 +40,7 @@ export default function WatchPage() {
         if (!socket) return;
 
         const handleSessionCreated = ({ sessionId: newSessionId, resumeToken, password }) => {
+            capture('fliccs_room_created');
             if (resumeToken) sessionStorage.setItem('fliccs-room', JSON.stringify({ sessionId: newSessionId, resumeToken }));
             setSessionPassword(password || '');
             setSessionId(newSessionId);
@@ -46,6 +48,7 @@ export default function WatchPage() {
         };
 
         const handleSessionJoined = ({ sessionId: joinedSessionId, resumeToken, password }) => {
+            capture('fliccs_room_joined');
             if (resumeToken) sessionStorage.setItem('fliccs-room', JSON.stringify({ sessionId: joinedSessionId, resumeToken }));
             setSessionPassword(password || '');
             setSessionId(joinedSessionId);
@@ -75,6 +78,7 @@ export default function WatchPage() {
             catch { sessionStorage.removeItem('fliccs-room'); }
         };
         const resumeFailed = () => {
+            capture('fliccs_room_resume_failed');
             resetSessionState();
             setAppError('This room could not be restored. Please join again.');
         };

@@ -5,7 +5,7 @@ export default function PrivacyPage() {
         <PageLayout title="Privacy Policy" description="What Fliccs keeps, what it never keeps, and how your sessions remain private.">
             <div className="policy-content">
                 <div className="policy-intro">
-                    <p className="policy-kicker">Last updated: January 2026</p>
+                    <p className="policy-kicker">Last updated: September 2026</p>
                     <p className="policy-lead">
                         Your privacy is non-negotiable. Fliccs is built to be ephemeral, meaning we don't store what you don't ask us to.
                     </p>
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
                         <span>01.</span> Data Collection
                     </h2>
                     <p>
-                        We prioritize your privacy. We do not collect personal usage data from our Free tier users. For Premium users, we collect only the information necessary to provide the service (such as email address for authentication and payment processing details through our secure payment provider).
+                        We may collect browser-level page views and basic product events, such as room creation, joining, and technical failures. These events do not include room IDs, invite links, passwords, nicknames, chat text, or video content. Premium accounts also require the details needed for authentication and payment.
                     </p>
                 </section>
 
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
                         <span>02.</span> Use of Data
                     </h2>
                     <p>
-                        Any data collected is used solely for the purpose of maintaining your account, processing payments, and ensuring the technical stability of our service. We do not sell your data to third parties. Ever.
+                        We use product events to understand where people get stuck and to improve reliability. PostHog processes these events for us in its US Cloud region. We do not sell your data to third parties.
                     </p>
                 </section>
 
@@ -36,6 +36,7 @@ export default function PrivacyPage() {
                     <p>
                         Fliccs sessions are designed to be ephemeral. We do not persistently store chat logs, file metadata, or stream contents after a session has ended. Once a room is destroyed, the data is gone.
                     </p>
+                    <p>We never make session recordings of the watch room or its entry forms.</p>
                 </section>
 
                 <section>

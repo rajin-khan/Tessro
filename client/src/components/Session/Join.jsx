@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { capture } from '../../analytics.js';
 
 // Add `onSessionStart` to the props
 function JoinSession({ socket, isConnected, onSessionStart }) {
@@ -20,6 +21,7 @@ function JoinSession({ socket, isConnected, onSessionStart }) {
 
         setError('');
         setIsJoining(true);
+        capture('fliccs_room_join_attempted');
 
         const name = nickname.trim() || `Guest${Math.floor(Math.random() * 1000)}`;
 
@@ -34,6 +36,7 @@ function JoinSession({ socket, isConnected, onSessionStart }) {
     useEffect(() => {
         // We only need to listen for errors here now. Success is handled by App.jsx
         const handleJoinError = ({ error }) => {
+            capture('fliccs_room_join_failed');
             setError(error);
             setIsJoining(false);
         };

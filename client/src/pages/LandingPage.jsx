@@ -3,6 +3,7 @@ import { FaComments, FaLink, FaExpand } from 'react-icons/fa';
 import SiteHeader from '../components/Layout/SiteHeader';
 import './landing.css';
 import LandingTicket from '../components/LandingTicket';
+import { capture } from '../analytics.js';
 
 export default function LandingPage() {
     return (
@@ -15,7 +16,7 @@ export default function LandingPage() {
                         <p className="intro-pill">Real time. Real fast.</p>
                         <h1 id="intro-title">WATCH<br />TOGETHER.</h1>
                         <p className="intro-description">Bring your videos and friends. No account needed.</p>
-                        <Link to="/watch" className="intro-button">GET STARTED</Link>
+                        <Link to="/watch" className="intro-button" onClick={() => capture('fliccs_marketing_cta_clicked', { cta_id: 'get_started', surface: 'landing' })}>GET STARTED</Link>
                     </div>
                     <LandingTicket />
                 </section>

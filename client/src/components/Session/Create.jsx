@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { capture } from '../../analytics.js';
 
 // Add `onSessionStart` to the props
 function CreateSession({ socket, isConnected, onSessionStart }) {
@@ -19,6 +20,7 @@ function CreateSession({ socket, isConnected, onSessionStart }) {
 
         setError('');
         setIsLoading(true);
+        capture('fliccs_room_create_attempted');
 
         // Call the new prop with the password before emitting
         if (onSessionStart) {
